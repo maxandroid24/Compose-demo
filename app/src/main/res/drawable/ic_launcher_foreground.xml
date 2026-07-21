@@ -1,0 +1,36 @@
+<vector xmlns:android="http://schemas.android.com/apk/res/android"
+    android:width="108dp"
+    android:height="108dp"
+    android:viewportWidth="108"
+    android:viewportHeight="108">
+    <!-- Outer Card Container -->
+    <path
+        android:fillColor="#38BDF8"
+        android:pathData="M34,26h40c4.4,0 8,3.6 8,8v44c0,4.4 -3.6,8 -8,8H34c-4.4,0 -8,-3.6 -8,-8V34c0,-4.4 3.6,-8 8,-8z" />
+    <!-- White Inner Board -->
+    <path
+        android:fillColor="#FFFFFF"
+        android:pathData="M37,30h34c2.2,0 4,1.8 4,4v38c0,2.2 -1.8,4 -4,4H37c-2.2,0 -4,-1.8 -4,-4V34c0,-2.2 1.8,-4 4,-4z" />
+    <!-- Checklist items -->
+    <!-- Checkmark 1 -->
+    <path
+        android:fillColor="#0284C7"
+        android:pathData="M40,42l3,3l7,-7l2,2l-9,9l-5,-5z" />
+    <path
+        android:fillColor="#64748B"
+        android:pathData="M56,41h12v3H56z" />
+    <!-- Checkmark 2 -->
+    <path
+        android:fillColor="#0284C7"
+        android:pathData="M40,54l3,3l7,-7l2,2l-9,9l-5,-5z" />
+    <path
+        android:fillColor="#64748B"
+        android:pathData="M56,53h12v3H56z" />
+    <!-- Checkmark 3 -->
+    <path
+        android:fillColor="#38BDF8"
+        android:pathData="M40,66l3,3l7,-7l2,2l-9,9l-5,-5z" />
+    <path
+        android:fillColor="#94A3B8"
+        android:pathData="M56,65h12v3H56z" />
+</vector>
