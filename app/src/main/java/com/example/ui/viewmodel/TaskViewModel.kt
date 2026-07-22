@@ -1,5 +1,6 @@
 package com.example.ui.viewmodel
 
+import androidx.lifecycle.SavedStateHandle
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.example.domain.model.Category
@@ -33,14 +34,19 @@ import javax.inject.Inject
  *
  * Architectural Pattern & Decision Rationale:
  * - Annotated with [@HiltViewModel] to allow Hilt to construct and inject domain UseCases automatically.
- * - MVVM Pattern: Holds and manages UI state in a lifecycle-aware manner. ViewModel survives
- *   configuration changes (e.g., screen rotations) without re-fetching or losing user state.
- * - Reactive [StateFlow]: Exposes immutable state flows observed by Composables inside Fragments
- *   using `collectAsStateWithLifecycle()`.
+ * - MVVM Pattern: Holds and manages UI state in a lifecycle-aware manner.
+ * - **SavedStateHandle Integration**:
+ *   - Why & When SavedStateHandle is used instead of plain ViewModel memory state:
+ *     Standard ViewModel fields survive **Configuration Changes** (e.g. screen rotation).
+ *     However, if the OS terminates the application in the background due to memory pressure
+ *     (**System-Initiated Process Death**), standard ViewModel state in RAM is lost.
+ *     [SavedStateHandle] writes state into the system bundle, allowing user search queries,
+ *     filter selections, or draft inputs to be automatically restored when the user returns.
  */
 @OptIn(FlowPreview::class)
 @HiltViewModel
 class TaskViewModel @Inject constructor(
+    private val savedStateHandle: SavedStateHandle = SavedStateHandle(),
     private val getTasksUseCase: GetTasksUseCase,
     private val addTaskUseCase: AddTaskUseCase,
     private val updateTaskUseCase: UpdateTaskUseCase,
@@ -49,9 +55,20 @@ class TaskViewModel @Inject constructor(
     private val getTaskStatsUseCase: GetTaskStatsUseCase
 ) : ViewModel() {
 
-    // Filter states
-    private val _searchQuery = MutableStateFlow("")
-    private val _selectedCategory = MutableStateFlow<Category?>(null)
+    companion object {
+        private const val KEY_SEARCH_QUERY = "saved_search_query"
+        private const val KEY_SELECTED_CATEGORY = "saved_selected_category"
+    }
+
+    // Filter states - Persisted in SavedStateHandle across System-Initiated Process Death
+    private val _searchQuery = MutableStateFlow(
+        savedStateHandle.get<String>(KEY_SEARCH_QUERY) ?: ""
+    )
+    private val _selectedCategory = MutableStateFlow<Category?>(
+        savedStateHandle.get<String>(KEY_SELECTED_CATEGORY)?.let { name ->
+            try { Category.valueOf(name) } catch (_: Exception) { null }
+        }
+    )
     private val _selectedPriority = MutableStateFlow<Priority?>(null)
     private val _showCompletedOnly = MutableStateFlow<Boolean?>(null)
 
@@ -124,10 +141,12 @@ class TaskViewModel @Inject constructor(
     // User Actions
     fun onSearchQueryChanged(query: String) {
         _searchQuery.value = query
+        savedStateHandle[KEY_SEARCH_QUERY] = query
     }
 
     fun onCategoryFilterSelected(category: Category?) {
         _selectedCategory.value = category
+        savedStateHandle[KEY_SELECTED_CATEGORY] = category?.name
     }
 
     fun onPriorityFilterSelected(priority: Priority?) {
