@@ -10,6 +10,7 @@ import androidx.compose.ui.platform.ViewCompositionStrategy
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.activityViewModels
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
+import androidx.appcompat.app.AlertDialog
 import com.example.TaskApplication
 import com.example.ui.screens.SettingsScreen
 import com.example.ui.theme.TaskManagerTheme
@@ -18,6 +19,7 @@ import dagger.hilt.android.AndroidEntryPoint
 
 /**
  * Fragment hosting [SettingsScreen] for WorkManager background sync preferences.
+ * Demonstrates native [AlertDialog] prompt handling inside Fragment lifecycle.
  */
 @AndroidEntryPoint
 class SettingsFragment : Fragment() {
@@ -40,7 +42,9 @@ class SettingsFragment : Fragment() {
 
                     SettingsScreen(
                         syncUiState = syncUiState,
-                        onTriggerSyncClick = viewModel::triggerManualSync,
+                        onTriggerSyncClick = {
+                            showSyncConfirmationDialog()
+                        },
                         onBackClick = {
                             (activity as? NavigationHandler)?.navigateBack()
                         }
@@ -48,5 +52,19 @@ class SettingsFragment : Fragment() {
                 }
             }
         }
+    }
+
+    /**
+     * Displays an AlertDialog inside the Fragment to confirm triggering manual network sync.
+     */
+    private fun showSyncConfirmationDialog() {
+        AlertDialog.Builder(requireContext())
+            .setTitle("Start Manual Sync")
+            .setMessage("Do you want to force an immediate synchronization with the remote REST server?")
+            .setPositiveButton("Sync Now") { _, _ ->
+                viewModel.triggerManualSync()
+            }
+            .setNegativeButton("Cancel", null)
+            .show()
     }
 }

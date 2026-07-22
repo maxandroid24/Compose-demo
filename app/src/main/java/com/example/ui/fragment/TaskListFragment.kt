@@ -10,6 +10,7 @@ import androidx.compose.ui.platform.ViewCompositionStrategy
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.activityViewModels
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
+import androidx.appcompat.app.AlertDialog
 import com.example.TaskApplication
 import com.example.ui.screens.TaskListScreen
 import com.example.ui.theme.TaskManagerTheme
@@ -22,8 +23,7 @@ import dagger.hilt.android.AndroidEntryPoint
  * Architectural Pattern & Decision Rationale:
  * - Annotated with [@AndroidEntryPoint] to support Hilt Fragment injection.
  * - Modular Fragment Architecture: Encapsulates individual screens into distinct [Fragment] components.
- * - Uses `activityViewModels` with `appContainer.provideTaskViewModelFactory()` to share a single
- *   ViewModel instance across screens in the Activity backstack.
+ * - Demonstrates Fragment native [AlertDialog] handling for critical user actions (such as task deletion).
  */
 @AndroidEntryPoint
 class TaskListFragment : Fragment() {
@@ -51,7 +51,9 @@ class TaskListFragment : Fragment() {
                         onPriorityFilterSelected = viewModel::onPriorityFilterSelected,
                         onToggleCompletionFilter = viewModel::onToggleCompletionFilter,
                         onToggleTaskCompletion = viewModel::onToggleTaskCompletion,
-                        onDeleteTask = viewModel::onDeleteTask,
+                        onDeleteTask = { taskId ->
+                            showDeleteConfirmationDialog(taskId)
+                        },
                         onTaskClick = { task ->
                             viewModel.prepareEditTask(task)
                             (activity as? NavigationHandler)?.navigateToDetail()
@@ -70,6 +72,21 @@ class TaskListFragment : Fragment() {
                 }
             }
         }
+    }
+
+    /**
+     * Displays a native Android [AlertDialog] within the Fragment context
+     * to confirm task deletion before proceeding.
+     */
+    private fun showDeleteConfirmationDialog(taskId: String) {
+        AlertDialog.Builder(requireContext())
+            .setTitle("Delete Task")
+            .setMessage("Are you sure you want to permanently delete this task?")
+            .setPositiveButton("Delete") { _, _ ->
+                viewModel.onDeleteTask(taskId)
+            }
+            .setNegativeButton("Cancel", null)
+            .show()
     }
 }
 
