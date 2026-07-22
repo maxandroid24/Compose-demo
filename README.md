@@ -10,77 +10,56 @@ The application strictly follows Clean Architecture principles divided into thre
 
 ```mermaid
 graph TD
-    %% Architecture Overview Diagram
-
-    subgraph Presentation_Layer["Presentation Layer (UI & MVVM)"]
-        MA["MainActivity (Single Activity Host)"]
-        NH["NavigationHandler Interface"]
-        
-        subgraph Fragments["Modular Fragments"]
-            TLF["TaskListFragment"]
-            TDF["TaskDetailFragment"]
-            TAF["TaskAnalyticsFragment"]
-            SF["SettingsFragment"]
-        end
-        
-        subgraph Compose_Screens["Jetpack Compose UI"]
-            TLS["TaskListScreen & TaskCard"]
-            TDS["TaskDetailScreen & ContactPicker"]
-            TAS["TaskAnalyticsScreen"]
-            SS["SettingsScreen"]
-        end
-        
+    subgraph Presentation ["Presentation Layer (UI & MVVM)"]
+        MA["MainActivity"]
+        NH["NavigationHandler"]
+        TLF["TaskListFragment"]
+        TDF["TaskDetailFragment"]
+        TAF["TaskAnalyticsFragment"]
+        SF["SettingsFragment"]
+        TLS["TaskListScreen & TaskCard"]
+        TDS["TaskDetailScreen & ContactPicker"]
+        TAS["TaskAnalyticsScreen"]
+        SS["SettingsScreen"]
         VM["TaskViewModel"]
-        UIS["TaskUiState (TaskList / TaskDetail / Sync / Analytics)"]
+        UIS["TaskUiState"]
     end
 
-    subgraph Domain_Layer["Domain Layer (Business Logic)"]
+    subgraph Domain ["Domain Layer (Business Logic)"]
         UC1["GetTasksUseCase"]
         UC2["AddTaskUseCase"]
         UC3["UpdateTaskUseCase"]
         UC4["DeleteTaskUseCase"]
         UC5["SyncTasksUseCase"]
         UC6["GetTaskStatsUseCase"]
-        
-        DM["Domain Models (Task, Priority, Category, SyncStatus)"]
+        DM["Domain Models"]
         TR_INT["TaskRepository Interface"]
     end
 
-    subgraph Data_Layer["Data Layer (Persistence & Communications)"]
+    subgraph Data ["Data Layer (Persistence & System Services)"]
         TR_IMPL["TaskRepositoryImpl"]
-        
-        subgraph Local_Storage["Local Storage (Room Database)"]
-            TDB["TaskDatabase (Room v2)"]
-            TDAO["TaskDao"]
-            TENT["TaskEntity"]
-        end
-        
-        subgraph Remote_Network["Remote API (Retrofit 2)"]
-            TAPI["TaskApiService"]
-            MNI["MockNetworkInterceptor"]
-            MOSHI["Moshi Converter"]
-        end
-        
-        subgraph Background_Workers["Background Execution (WorkManager)"]
-            WMS["WorkManagerScheduler"]
-            SW["SyncWorker (Periodic & One-Time Remote Sync)"]
-            TRW["TaskReminderWorker (Local Push Notifications)"]
-        end
-
-        subgraph System_Integrations["System Integrations"]
-            NCR["NetworkConnectivityReceiver (BroadcastReceiver)"]
-            CPM["ContactsProviderManager (ContentProvider Query)"]
-        end
+        TDB[("TaskDatabase - Room")]
+        TDAO["TaskDao"]
+        TENT["TaskEntity"]
+        TAPI["TaskApiService - Retrofit"]
+        MNI["MockNetworkInterceptor"]
+        MOSHI["Moshi Converter"]
+        WMS["WorkManagerScheduler"]
+        SW["SyncWorker"]
+        TRW["TaskReminderWorker"]
+        NCR["NetworkConnectivityReceiver"]
+        CPM["ContactsProviderManager"]
     end
 
-    subgraph DI_Container["Dependency Injection Container"]
-        AC["AppContainer (Manual DI + Hilt Support)"]
+    subgraph DI ["Dependency Injection"]
+        AC["AppContainer"]
     end
 
-    %% Presentation to Domain
     MA --> NH
-    Fragments --> Compose_Screens
-    Fragments --> VM
+    TLF --> VM
+    TDF --> VM
+    TAF --> VM
+    SF --> VM
     VM --> UIS
     VM --> UC1
     VM --> UC2
@@ -88,34 +67,25 @@ graph TD
     VM --> UC4
     VM --> UC5
     VM --> UC6
-
-    %% Domain to Repository Interface
     UC1 --> TR_INT
     UC2 --> TR_INT
     UC3 --> TR_INT
     UC4 --> TR_INT
     UC5 --> TR_INT
     UC6 --> TR_INT
-    TR_INT -. Implemented by .-> TR_IMPL
-
-    %% Data Layer Flow
+    TR_IMPL --> TR_INT
     TR_IMPL --> TDAO
     TDAO --> TDB
     TDAO --> TENT
     TR_IMPL --> TAPI
     TAPI --> MNI
     TAPI --> MOSHI
-
-    %% Scheduling & Integrations Flow
     TR_IMPL --> WMS
     WMS --> SW
     WMS --> TRW
     SW --> TR_INT
     NCR --> TR_INT
     TDS --> CPM
-    CPM -. Reads .-> ContactsContract["Device ContactsContract ContentProvider"]
-
-    %% Dependency Injection Connections
     AC --> TR_IMPL
     AC --> TDB
     AC --> TAPI
