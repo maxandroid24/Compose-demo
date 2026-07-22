@@ -163,7 +163,9 @@ class TaskViewModel @Inject constructor(
             isCompleted = task.isCompleted,
             priority = task.priority,
             category = task.category,
-            dueDateMillis = task.dueDateMillis
+            dueDateMillis = task.dueDateMillis,
+            assignedContactName = task.assignedContactName,
+            assignedContactPhone = task.assignedContactPhone
         )
     }
 
@@ -187,6 +189,15 @@ class TaskViewModel @Inject constructor(
         _detailUiState.update { it.copy(dueDateMillis = dueDateMillis) }
     }
 
+    fun onDetailContactSelected(name: String?, phone: String?) {
+        _detailUiState.update {
+            it.copy(
+                assignedContactName = name,
+                assignedContactPhone = phone
+            )
+        }
+    }
+
     fun saveTask() {
         val currentState = _detailUiState.value
         if (currentState.title.isBlank()) {
@@ -203,7 +214,9 @@ class TaskViewModel @Inject constructor(
                 isCompleted = currentState.isCompleted,
                 priority = currentState.priority,
                 category = currentState.category,
-                dueDateMillis = currentState.dueDateMillis
+                dueDateMillis = currentState.dueDateMillis,
+                assignedContactName = currentState.assignedContactName,
+                assignedContactPhone = currentState.assignedContactPhone
             )
 
             val result = if (currentState.id.isBlank()) {

@@ -5,6 +5,7 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.ViewModelProvider
 import androidx.room.Room
 import com.example.data.local.TaskDatabase
+import com.example.data.provider.ContactsProviderManager
 import com.example.data.remote.MockNetworkInterceptor
 import com.example.data.remote.TaskApiService
 import com.example.data.repository.TaskRepositoryImpl
@@ -80,6 +81,10 @@ class AppContainer(context: Context) {
 
     val workManagerScheduler by lazy {
         WorkManagerScheduler(context.applicationContext)
+    }
+
+    val contactsProviderManager by lazy {
+        ContactsProviderManager(context.applicationContext)
     }
 
     val taskRepository: TaskRepository by lazy {

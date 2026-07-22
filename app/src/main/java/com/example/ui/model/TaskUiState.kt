@@ -32,6 +32,8 @@ data class TaskDetailUiState(
     val priority: Priority = Priority.MEDIUM,
     val category: Category = Category.PERSONAL,
     val dueDateMillis: Long? = null,
+    val assignedContactName: String? = null,
+    val assignedContactPhone: String? = null,
     val isSaving: Boolean = false,
     val saveSuccess: Boolean = false,
     val errorMessage: String? = null

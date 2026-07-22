@@ -2,12 +2,14 @@ package com.example.data.worker
 
 import android.content.Context
 import androidx.work.Constraints
+import androidx.work.Data
 import androidx.work.ExistingPeriodicWorkPolicy
 import androidx.work.ExistingWorkPolicy
 import androidx.work.NetworkType
 import androidx.work.OneTimeWorkRequestBuilder
 import androidx.work.PeriodicWorkRequestBuilder
 import androidx.work.WorkManager
+import com.example.domain.model.Task
 import dagger.hilt.android.qualifiers.ApplicationContext
 import java.util.concurrent.TimeUnit
 import javax.inject.Inject
@@ -32,6 +34,7 @@ class WorkManagerScheduler @Inject constructor(
     companion object {
         const val PERIODIC_SYNC_WORK_NAME = "periodic_task_sync_work"
         const val ONE_TIME_SYNC_WORK_NAME = "one_time_task_sync_work"
+        const val REMINDER_WORK_PREFIX = "reminder_task_"
     }
 
     /**
@@ -70,5 +73,42 @@ class WorkManagerScheduler @Inject constructor(
             ExistingWorkPolicy.REPLACE,
             oneTimeRequest
         )
+    }
+
+    /**
+     * Schedules a push notification reminder for a task at its due date.
+     */
+    fun scheduleTaskReminder(task: Task) {
+        val dueDateMillis = task.dueDateMillis ?: return
+        val delayMillis = dueDateMillis - System.currentTimeMillis()
+
+        if (delayMillis > 0 && !task.isCompleted) {
+            val inputData = Data.Builder()
+                .putString(TaskReminderWorker.KEY_TASK_ID, task.id)
+                .putString(TaskReminderWorker.KEY_TASK_TITLE, task.title)
+                .putString(TaskReminderWorker.KEY_TASK_DESCRIPTION, task.description)
+                .build()
+
+            val reminderRequest = OneTimeWorkRequestBuilder<TaskReminderWorker>()
+                .setInitialDelay(delayMillis, TimeUnit.MILLISECONDS)
+                .setInputData(inputData)
+                .addTag("${REMINDER_WORK_PREFIX}${task.id}")
+                .build()
+
+            workManager.enqueueUniqueWork(
+                "${REMINDER_WORK_PREFIX}${task.id}",
+                ExistingWorkPolicy.REPLACE,
+                reminderRequest
+            )
+        } else {
+            cancelTaskReminder(task.id)
+        }
+    }
+
+    /**
+     * Cancels any pending notification reminder for a given task ID.
+     */
+    fun cancelTaskReminder(taskId: String) {
+        workManager.cancelUniqueWork("${REMINDER_WORK_PREFIX}${taskId}")
     }
 }

@@ -94,6 +94,7 @@ class TaskRepositoryImpl @Inject constructor(
         val newTask = task.copy(syncStatus = SyncStatus.PENDING_INSERT)
         taskDao.insertTask(newTask.toEntity())
         workManagerScheduler.scheduleOneTimeSync()
+        workManagerScheduler.scheduleTaskReminder(newTask)
     }
 
     override suspend fun updateTask(task: Task) {
@@ -102,11 +103,17 @@ class TaskRepositoryImpl @Inject constructor(
         )
         taskDao.updateTask(updatedTask.toEntity())
         workManagerScheduler.scheduleOneTimeSync()
+        if (updatedTask.isCompleted) {
+            workManagerScheduler.cancelTaskReminder(updatedTask.id)
+        } else {
+            workManagerScheduler.scheduleTaskReminder(updatedTask)
+        }
     }
 
     override suspend fun deleteTask(taskId: String) {
         val existingEntity = taskDao.getTaskByIdSync(taskId)
         if (existingEntity != null) {
+            workManagerScheduler.cancelTaskReminder(taskId)
             if (existingEntity.syncStatus == SyncStatus.PENDING_INSERT.name) {
                 // If it was never sent to server, delete locally immediately
                 taskDao.deleteTaskById(taskId)

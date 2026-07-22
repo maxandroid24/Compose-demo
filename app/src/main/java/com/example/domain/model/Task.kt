@@ -20,6 +20,8 @@ data class Task(
     val priority: Priority = Priority.MEDIUM,
     val category: Category = Category.PERSONAL,
     val dueDateMillis: Long? = null,
+    val assignedContactName: String? = null,
+    val assignedContactPhone: String? = null,
     val createdAtMillis: Long = System.currentTimeMillis(),
     val syncStatus: SyncStatus = SyncStatus.SYNCED
 )

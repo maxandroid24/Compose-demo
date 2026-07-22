@@ -19,6 +19,7 @@ import androidx.compose.material.icons.filled.Check
 import androidx.compose.material.icons.filled.Delete
 import androidx.compose.material.icons.filled.Flag
 import androidx.compose.material.icons.filled.Folder
+import androidx.compose.material.icons.filled.Person
 import androidx.compose.material.icons.filled.Schedule
 import androidx.compose.material.icons.filled.Sync
 import androidx.compose.material3.Card
@@ -153,6 +154,10 @@ fun TaskCard(
                         DueDateChip(dueDateMillis = millis)
                     }
 
+                    task.assignedContactName?.let { name ->
+                        ContactChip(contactName = name)
+                    }
+
                     if (task.syncStatus != SyncStatus.SYNCED) {
                         SyncStatusChip(syncStatus = task.syncStatus)
                     }
@@ -263,6 +268,37 @@ fun DueDateChip(dueDateMillis: Long, modifier: Modifier = Modifier) {
                     fontWeight = FontWeight.Medium
                 ),
                 color = MaterialTheme.colorScheme.onSecondaryContainer
+            )
+        }
+    }
+}
+
+@Composable
+fun ContactChip(contactName: String, modifier: Modifier = Modifier) {
+    Surface(
+        color = MaterialTheme.colorScheme.tertiaryContainer,
+        shape = RoundedCornerShape(8.dp),
+        modifier = modifier
+    ) {
+        Row(
+            modifier = Modifier.padding(horizontal = 8.dp, vertical = 4.dp),
+            verticalAlignment = Alignment.CenterVertically
+        ) {
+            Icon(
+                imageVector = Icons.Default.Person,
+                contentDescription = null,
+                tint = MaterialTheme.colorScheme.onTertiaryContainer,
+                modifier = Modifier.size(12.dp)
+            )
+            Spacer(modifier = Modifier.width(4.dp))
+            Text(
+                text = contactName,
+                style = MaterialTheme.typography.labelSmall.copy(
+                    fontSize = 10.sp,
+                    fontWeight = FontWeight.Medium
+                ),
+                color = MaterialTheme.colorScheme.onTertiaryContainer,
+                maxLines = 1
             )
         }
     }

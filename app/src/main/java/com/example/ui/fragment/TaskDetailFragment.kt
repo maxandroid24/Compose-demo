@@ -49,6 +49,7 @@ class TaskDetailFragment : Fragment() {
                         onPriorityChanged = viewModel::onDetailPriorityChanged,
                         onCategoryChanged = viewModel::onDetailCategoryChanged,
                         onDueDateChanged = viewModel::onDetailDueDateChanged,
+                        onContactSelected = viewModel::onDetailContactSelected,
                         onSaveClick = viewModel::saveTask,
                         onBackClick = {
                             (activity as? NavigationHandler)?.navigateBack()

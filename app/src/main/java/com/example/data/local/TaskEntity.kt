@@ -22,6 +22,8 @@ data class TaskEntity(
     val priority: String, // Stored as String name of Priority enum
     val category: String, // Stored as String name of Category enum
     val dueDateMillis: Long?,
+    val assignedContactName: String? = null,
+    val assignedContactPhone: String? = null,
     val createdAtMillis: Long,
     val syncStatus: String // Stored as String name of SyncStatus enum
 )

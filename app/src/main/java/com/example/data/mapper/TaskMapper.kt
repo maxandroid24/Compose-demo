@@ -25,6 +25,8 @@ fun TaskEntity.toDomain(): Task {
         priority = try { Priority.valueOf(priority) } catch (_: Exception) { Priority.MEDIUM },
         category = try { Category.valueOf(category) } catch (_: Exception) { Category.PERSONAL },
         dueDateMillis = dueDateMillis,
+        assignedContactName = assignedContactName,
+        assignedContactPhone = assignedContactPhone,
         createdAtMillis = createdAtMillis,
         syncStatus = try { SyncStatus.valueOf(syncStatus) } catch (_: Exception) { SyncStatus.SYNCED }
     )
@@ -39,6 +41,8 @@ fun Task.toEntity(): TaskEntity {
         priority = priority.name,
         category = category.name,
         dueDateMillis = dueDateMillis,
+        assignedContactName = assignedContactName,
+        assignedContactPhone = assignedContactPhone,
         createdAtMillis = createdAtMillis,
         syncStatus = syncStatus.name
     )
@@ -54,6 +58,8 @@ fun TaskDto.toDomain(): Task {
         priority = try { Priority.valueOf(priority.uppercase()) } catch (_: Exception) { Priority.MEDIUM },
         category = try { Category.valueOf(category.uppercase()) } catch (_: Exception) { Category.PERSONAL },
         dueDateMillis = dueDateMillis,
+        assignedContactName = assignedContactName,
+        assignedContactPhone = assignedContactPhone,
         createdAtMillis = createdAtMillis,
         syncStatus = SyncStatus.SYNCED
     )
@@ -68,6 +74,8 @@ fun Task.toDto(): TaskDto {
         priority = priority.name,
         category = category.name,
         dueDateMillis = dueDateMillis,
+        assignedContactName = assignedContactName,
+        assignedContactPhone = assignedContactPhone,
         createdAtMillis = createdAtMillis
     )
 }
@@ -81,6 +89,8 @@ fun TaskDto.toEntity(syncStatus: SyncStatus = SyncStatus.SYNCED): TaskEntity {
         priority = priority.uppercase(),
         category = category.uppercase(),
         dueDateMillis = dueDateMillis,
+        assignedContactName = assignedContactName,
+        assignedContactPhone = assignedContactPhone,
         createdAtMillis = createdAtMillis,
         syncStatus = syncStatus.name
     )
