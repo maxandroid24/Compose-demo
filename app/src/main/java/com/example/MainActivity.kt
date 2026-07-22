@@ -2,7 +2,7 @@ package com.example
 
 import android.os.Bundle
 import androidx.activity.enableEdgeToEdge
-import androidx.fragment.app.FragmentActivity
+import androidx.appcompat.app.AppCompatActivity
 import androidx.fragment.app.commit
 import com.example.ui.fragment.NavigationHandler
 import com.example.ui.fragment.SettingsFragment
@@ -22,7 +22,7 @@ import dagger.hilt.android.AndroidEntryPoint
  *   [TaskAnalyticsFragment], [SettingsFragment]) cleanly on the support fragment manager backstack.
  */
 @AndroidEntryPoint
-class MainActivity : FragmentActivity(), NavigationHandler {
+class MainActivity : AppCompatActivity(), NavigationHandler {
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
