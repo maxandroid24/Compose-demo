@@ -1,0 +1,224 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.coordinatorlayout.widget.CoordinatorLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="?android:attr/colorBackground">
+
+    <com.google.android.material.appbar.AppBarLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:fitsSystemWindows="true">
+
+        <com.google.android.material.appbar.MaterialToolbar
+            android:id="@+id/toolbar"
+            android:layout_width="match_parent"
+            android:layout_height="?attr/actionBarSize"
+            app:title="Task Manager (XML)"
+            app:subtitle="📄 Traditional Android Layout"
+            app:navigationIcon="@drawable/ic_back" />
+
+        <!-- Banner showing comparison mode -->
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:background="#E8F0FE"
+            android:orientation="horizontal"
+            android:paddingHorizontal="16dp"
+            android:paddingVertical="8dp"
+            android:gravity="center_vertical">
+
+            <TextView
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:text="📄 UI built using XML (RecyclerView + ConstraintLayout)"
+                android:textColor="#1A73E8"
+                android:textSize="12sp"
+                android:textStyle="bold" />
+
+            <com.google.android.material.button.MaterialButton
+                android:id="@+id/btnSwitchToCompose"
+                style="@style/Widget.Material3.Button.TextButton"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Switch to Compose ⚡"
+                android:textColor="#1A73E8"
+                android:textSize="11sp" />
+        </LinearLayout>
+
+    </com.google.android.material.appbar.AppBarLayout>
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:orientation="vertical"
+        app:layout_behavior="@string/appbar_scrolling_view_behavior">
+
+        <!-- Search Bar -->
+        <com.google.android.material.textfield.TextInputLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_margin="12dp"
+            style="@style/Widget.Material3.TextInputLayout.OutlinedBox"
+            app:startIconDrawable="@android:drawable/ic_menu_search"
+            app:hintEnabled="true">
+
+            <com.google.android.material.textfield.TextInputEditText
+                android:id="@+id/etSearchQuery"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:hint="Search tasks..."
+                android:inputType="text" />
+        </com.google.android.material.textfield.TextInputLayout>
+
+        <!-- Category Horizontal Filter Scroll -->
+        <HorizontalScrollView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:scrollbars="none"
+            android:paddingHorizontal="12dp">
+
+            <com.google.android.material.chip.ChipGroup
+                android:id="@+id/chipGroupCategory"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                app:singleSelection="true">
+
+                <com.google.android.material.chip.Chip
+                    android:id="@+id/chipCatAll"
+                    style="@style/Widget.Material3.Chip.Filter"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="All Categories"
+                    android:checked="true" />
+
+                <com.google.android.material.chip.Chip
+                    android:id="@+id/chipCatPersonal"
+                    style="@style/Widget.Material3.Chip.Filter"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="Personal" />
+
+                <com.google.android.material.chip.Chip
+                    android:id="@+id/chipCatWork"
+                    style="@style/Widget.Material3.Chip.Filter"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="Work" />
+
+                <com.google.android.material.chip.Chip
+                    android:id="@+id/chipCatHealth"
+                    style="@style/Widget.Material3.Chip.Filter"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="Health" />
+
+                <com.google.android.material.chip.Chip
+                    android:id="@+id/chipCatFinance"
+                    style="@style/Widget.Material3.Chip.Filter"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="Finance" />
+
+                <com.google.android.material.chip.Chip
+                    android:id="@+id/chipCatEducation"
+                    style="@style/Widget.Material3.Chip.Filter"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="Education" />
+            </com.google.android.material.chip.ChipGroup>
+        </HorizontalScrollView>
+
+        <!-- Task Count & Quick Actions -->
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal"
+            android:paddingHorizontal="16dp"
+            android:paddingVertical="8dp"
+            android:gravity="center_vertical">
+
+            <TextView
+                android:id="@+id/tvTaskCount"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:text="0 Tasks"
+                android:textSize="14sp"
+                android:textStyle="bold" />
+
+            <com.google.android.material.button.MaterialButton
+                android:id="@+id/btnNavAnalytics"
+                style="@style/Widget.Material3.Button.OutlinedButton"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Analytics"
+                android:textSize="12sp" />
+
+            <com.google.android.material.button.MaterialButton
+                android:id="@+id/btnNavSettings"
+                style="@style/Widget.Material3.Button.OutlinedButton"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="8dp"
+                android:text="Settings"
+                android:textSize="12sp" />
+        </LinearLayout>
+
+        <ProgressBar
+            android:id="@+id/progressBar"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center"
+            android:visibility="gone" />
+
+        <!-- RecyclerView for Task items -->
+        <androidx.recyclerview.widget.RecyclerView
+            android:id="@+id/recyclerViewTasks"
+            android:layout_width="match_parent"
+            android:layout_height="0dp"
+            android:layout_weight="1"
+            android:paddingHorizontal="12dp"
+            android:clipToPadding="false"
+            tools:listitem="@layout/item_task" />
+
+        <!-- Empty state layout -->
+        <LinearLayout
+            android:id="@+id/layoutEmpty"
+            android:layout_width="match_parent"
+            android:layout_height="0dp"
+            android:layout_weight="1"
+            android:orientation="vertical"
+            android:gravity="center"
+            android:padding="24dp"
+            android:visibility="gone">
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="No tasks found"
+                android:textSize="18sp"
+                android:textStyle="bold" />
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="4dp"
+                android:text="Tap + to create a new task"
+                android:textColor="?android:attr/textColorSecondary" />
+        </LinearLayout>
+
+    </LinearLayout>
+
+    <com.google.android.material.floatingactionbutton.FloatingActionButton
+        android:id="@+id/fabAddTask"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_gravity="bottom|end"
+        android:layout_margin="16dp"
+        android:contentDescription="Add Task"
+        app:srcCompat="@android:drawable/ic_input_add" />
+
+</androidx.coordinatorlayout.widget.CoordinatorLayout>

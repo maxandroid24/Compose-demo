@@ -1,97 +1,77 @@
 package com.example
 
+import android.content.Intent
 import android.os.Bundle
 import androidx.activity.enableEdgeToEdge
 import androidx.appcompat.app.AppCompatActivity
-import androidx.fragment.app.commit
-import com.example.ui.fragment.NavigationHandler
-import com.example.ui.fragment.SettingsFragment
-import com.example.ui.fragment.TaskAnalyticsFragment
-import com.example.ui.fragment.TaskDetailFragment
-import com.example.ui.fragment.TaskListFragment
+import com.example.databinding.ActivityMainBinding
+import com.example.ui.activity.SettingsComposeActivity
+import com.example.ui.activity.SettingsXmlActivity
+import com.example.ui.activity.TaskAnalyticsComposeActivity
+import com.example.ui.activity.TaskAnalyticsXmlActivity
+import com.example.ui.activity.TaskDetailComposeActivity
+import com.example.ui.activity.TaskDetailXmlActivity
+import com.example.ui.activity.TaskListComposeActivity
+import com.example.ui.activity.TaskListXmlActivity
 import dagger.hilt.android.AndroidEntryPoint
 
 /**
- * MainActivity serving as the single-activity entry point hosting a modular Fragment navigation flow.
+ * MainActivity serving as the central **Compose vs XML Comparison Hub**.
  *
  * Architectural Pattern & Decision Rationale:
- * - Single-Activity Architecture: Recommendations from Android Architecture Guidelines favor a single
- *   main Activity that manages view containers and navigation components.
- * - Annotated with [@AndroidEntryPoint] to attach the Hilt dependency graph to Activity lifecycle.
- * - Implements [NavigationHandler] to manage Fragment transitions ([TaskListFragment], [TaskDetailFragment],
- *   [TaskAnalyticsFragment], [SettingsFragment]) cleanly on the support fragment manager backstack.
+ * - Direct Side-by-Side Comparison: Launches every screen in either **Jetpack Compose** (declarative)
+ *   or **Traditional XML Layout** (imperative layout + ViewBinding) format to compare architectural paradigms.
  */
-@AndroidEntryPoint // Marks this activity as a Hilt component container for dependency injection
-class MainActivity : AppCompatActivity(), NavigationHandler {
+@AndroidEntryPoint
+class MainActivity : AppCompatActivity() {
+
+    private lateinit var binding: ActivityMainBinding
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        
-        // Enables edge-to-edge display, allowing content to utilize the full screen behind system bars
         enableEdgeToEdge()
 
-        // android.R.id.content is a built-in Android framework ID. 
-        // It refers to the root content FrameLayout that exists in every Activity window.
-        // By assigning this ID to our dynamically created FrameLayout, we define it as the 
-        // primary container for our UI/Fragments without requiring an XML layout file (like activity_main.xml).
-        val containerId = android.R.id.content
-        setContentView(
-            android.widget.FrameLayout(this).apply {
-                id = containerId
-            }
-        )
+        binding = ActivityMainBinding.inflate(layoutInflater)
+        setContentView(binding.root)
 
-        // Schedule periodic background sync with WorkManager via the AppContainer.
-        // This ensures data is synchronized even when the app is not in the foreground.
+        // Schedule periodic background sync with WorkManager
         val appContainer = (application as TaskApplication).appContainer
         appContainer.workManagerScheduler.schedulePeriodicSync()
 
-        // Display root TaskListFragment on initial launch.
-        // Only trigger this if savedInstanceState is null to avoid double-loading on configuration changes.
-        if (savedInstanceState == null) {
-            supportFragmentManager.commit {
-                replace(containerId, TaskListFragment())
-            }
-        }
+        setupButtons()
     }
 
-    /**
-     * Navigates to the Task Detail screen.
-     * Uses supportFragmentManager to replace the current fragment and adds the transaction to the back stack.
-     */
-    override fun navigateToDetail() {
-        supportFragmentManager.commit {
-            replace(android.R.id.content, TaskDetailFragment())
-            addToBackStack("detail") // Allows the user to navigate back to the list
+    private fun setupButtons() {
+        // 1. Task List Activity Pair
+        binding.btnOpenTaskListCompose.setOnClickListener {
+            startActivity(Intent(this, TaskListComposeActivity::class.java))
         }
-    }
-
-    /**
-     * Navigates to the Task Analytics screen.
-     */
-    override fun navigateToAnalytics() {
-        supportFragmentManager.commit {
-            replace(android.R.id.content, TaskAnalyticsFragment())
-            addToBackStack("analytics")
+        binding.btnOpenTaskListXml.setOnClickListener {
+            startActivity(Intent(this, TaskListXmlActivity::class.java))
         }
-    }
 
-    /**
-     * Navigates to the Settings screen.
-     */
-    override fun navigateToSettings() {
-        supportFragmentManager.commit {
-            replace(android.R.id.content, SettingsFragment())
-            addToBackStack("settings")
+        // 2. Task Detail Activity Pair
+        binding.btnOpenTaskDetailCompose.setOnClickListener {
+            startActivity(Intent(this, TaskDetailComposeActivity::class.java))
         }
-    }
+        binding.btnOpenTaskDetailXml.setOnClickListener {
+            startActivity(Intent(this, TaskDetailXmlActivity::class.java))
+        }
 
-    /**
-     * Handles the back navigation by popping the fragment manager's back stack.
-     */
-    override fun navigateBack() {
-        if (supportFragmentManager.backStackEntryCount > 0) {
-            supportFragmentManager.popBackStack()
+        // 3. Task Analytics Activity Pair
+        binding.btnOpenAnalyticsCompose.setOnClickListener {
+            startActivity(Intent(this, TaskAnalyticsComposeActivity::class.java))
+        }
+        binding.btnOpenAnalyticsXml.setOnClickListener {
+            startActivity(Intent(this, TaskAnalyticsXmlActivity::class.java))
+        }
+
+        // 4. Settings Activity Pair
+        binding.btnOpenSettingsCompose.setOnClickListener {
+            startActivity(Intent(this, SettingsComposeActivity::class.java))
+        }
+        binding.btnOpenSettingsXml.setOnClickListener {
+            startActivity(Intent(this, SettingsXmlActivity::class.java))
         }
     }
 }

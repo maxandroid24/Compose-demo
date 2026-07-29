@@ -29,6 +29,46 @@
             </intent-filter>
         </activity>
 
+        <activity
+            android:name=".ui.activity.TaskListComposeActivity"
+            android:exported="false"
+            android:label="Task List (Compose)" />
+
+        <activity
+            android:name=".ui.activity.TaskListXmlActivity"
+            android:exported="false"
+            android:label="Task List (XML)" />
+
+        <activity
+            android:name=".ui.activity.TaskDetailComposeActivity"
+            android:exported="false"
+            android:label="Task Detail (Compose)" />
+
+        <activity
+            android:name=".ui.activity.TaskDetailXmlActivity"
+            android:exported="false"
+            android:label="Task Detail (XML)" />
+
+        <activity
+            android:name=".ui.activity.TaskAnalyticsComposeActivity"
+            android:exported="false"
+            android:label="Task Analytics (Compose)" />
+
+        <activity
+            android:name=".ui.activity.TaskAnalyticsXmlActivity"
+            android:exported="false"
+            android:label="Task Analytics (XML)" />
+
+        <activity
+            android:name=".ui.activity.SettingsComposeActivity"
+            android:exported="false"
+            android:label="Settings (Compose)" />
+
+        <activity
+            android:name=".ui.activity.SettingsXmlActivity"
+            android:exported="false"
+            android:label="Settings (XML)" />
+
         <receiver
             android:name=".data.receiver.NetworkConnectivityReceiver"
             android:exported="true">

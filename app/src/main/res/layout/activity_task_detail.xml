@@ -1,0 +1,298 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.coordinatorlayout.widget.CoordinatorLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="?android:attr/colorBackground">
+
+    <com.google.android.material.appbar.AppBarLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:fitsSystemWindows="true">
+
+        <com.google.android.material.appbar.MaterialToolbar
+            android:id="@+id/toolbar"
+            android:layout_width="match_parent"
+            android:layout_height="?attr/actionBarSize"
+            app:title="Task Detail (XML)"
+            app:subtitle="📄 Traditional Android Layout"
+            app:navigationIcon="@drawable/ic_back" />
+
+        <!-- Banner showing comparison mode -->
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:background="#E8F0FE"
+            android:orientation="horizontal"
+            android:paddingHorizontal="16dp"
+            android:paddingVertical="8dp"
+            android:gravity="center_vertical">
+
+            <TextView
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:text="📄 UI built using XML (TextInputLayout + ChipGroup)"
+                android:textColor="#1A73E8"
+                android:textSize="12sp"
+                android:textStyle="bold" />
+
+            <com.google.android.material.button.MaterialButton
+                android:id="@+id/btnSwitchToCompose"
+                style="@style/Widget.Material3.Button.TextButton"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Switch to Compose ⚡"
+                android:textColor="#1A73E8"
+                android:textSize="11sp" />
+        </LinearLayout>
+
+    </com.google.android.material.appbar.AppBarLayout>
+
+    <androidx.core.widget.NestedScrollView
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        app:layout_behavior="@string/appbar_scrolling_view_behavior">
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="vertical"
+            android:padding="16dp">
+
+            <!-- Title Field -->
+            <com.google.android.material.textfield.TextInputLayout
+                android:id="@+id/tilTitle"
+                style="@style/Widget.Material3.TextInputLayout.OutlinedBox"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:hint="Task Title *">
+
+                <com.google.android.material.textfield.TextInputEditText
+                    android:id="@+id/etTitle"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:inputType="textCapSentences" />
+            </com.google.android.material.textfield.TextInputLayout>
+
+            <!-- Description Field -->
+            <com.google.android.material.textfield.TextInputLayout
+                style="@style/Widget.Material3.TextInputLayout.OutlinedBox"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="16dp"
+                android:hint="Description">
+
+                <com.google.android.material.textfield.TextInputEditText
+                    android:id="@+id/etDescription"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:gravity="top"
+                    android:inputType="textMultiLine"
+                    android:minLines="3" />
+            </com.google.android.material.textfield.TextInputLayout>
+
+            <!-- Priority Section -->
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="20dp"
+                android:text="Priority"
+                android:textSize="14sp"
+                android:textStyle="bold" />
+
+            <com.google.android.material.chip.ChipGroup
+                android:id="@+id/chipGroupPriority"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="8dp"
+                app:singleSelection="true">
+
+                <com.google.android.material.chip.Chip
+                    android:id="@+id/chipLow"
+                    style="@style/Widget.Material3.Chip.Filter"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="LOW" />
+
+                <com.google.android.material.chip.Chip
+                    android:id="@+id/chipMedium"
+                    style="@style/Widget.Material3.Chip.Filter"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:checked="true"
+                    android:text="MEDIUM" />
+
+                <com.google.android.material.chip.Chip
+                    android:id="@+id/chipHigh"
+                    style="@style/Widget.Material3.Chip.Filter"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="HIGH" />
+            </com.google.android.material.chip.ChipGroup>
+
+            <!-- Category Section -->
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="16dp"
+                android:text="Category"
+                android:textSize="14sp"
+                android:textStyle="bold" />
+
+            <com.google.android.material.chip.ChipGroup
+                android:id="@+id/chipGroupCategoryDetail"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="8dp"
+                app:singleSelection="true">
+
+                <com.google.android.material.chip.Chip
+                    android:id="@+id/chipCatDetPersonal"
+                    style="@style/Widget.Material3.Chip.Filter"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:checked="true"
+                    android:text="PERSONAL" />
+
+                <com.google.android.material.chip.Chip
+                    android:id="@+id/chipCatDetWork"
+                    style="@style/Widget.Material3.Chip.Filter"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="WORK" />
+
+                <com.google.android.material.chip.Chip
+                    android:id="@+id/chipCatDetHealth"
+                    style="@style/Widget.Material3.Chip.Filter"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="HEALTH" />
+
+                <com.google.android.material.chip.Chip
+                    android:id="@+id/chipCatDetFinance"
+                    style="@style/Widget.Material3.Chip.Filter"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="FINANCE" />
+
+                <com.google.android.material.chip.Chip
+                    android:id="@+id/chipCatDetEducation"
+                    style="@style/Widget.Material3.Chip.Filter"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="EDUCATION" />
+            </com.google.android.material.chip.ChipGroup>
+
+            <!-- Due Date Section -->
+            <com.google.android.material.card.MaterialCardView
+                android:id="@+id/cardDueDate"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="20dp"
+                app:cardCornerRadius="12dp"
+                app:cardElevation="1dp"
+                app:strokeWidth="1dp"
+                app:strokeColor="?attr/colorOutlineVariant">
+
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:gravity="center_vertical"
+                    android:orientation="horizontal"
+                    android:padding="16dp">
+
+                    <ImageView
+                        android:layout_width="24dp"
+                        android:layout_height="24dp"
+                        android:src="@android:drawable/ic_menu_my_calendar"
+                        app:tint="?attr/colorPrimary" />
+
+                    <LinearLayout
+                        android:layout_width="0dp"
+                        android:layout_height="wrap_content"
+                        android:layout_marginStart="12dp"
+                        android:layout_weight="1"
+                        android:orientation="vertical">
+
+                        <TextView
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:text="Due Date &amp; WorkManager Reminder"
+                            android:textSize="14sp"
+                            android:textStyle="bold" />
+
+                        <TextView
+                            android:id="@+id/tvDueDateText"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:text="No due date set (Tap to toggle)"
+                            android:textColor="?android:attr/textColorSecondary"
+                            android:textSize="12sp" />
+                    </LinearLayout>
+                </LinearLayout>
+            </com.google.android.material.card.MaterialCardView>
+
+            <!-- Assigned Person Section -->
+            <com.google.android.material.card.MaterialCardView
+                android:id="@+id/cardAssignContact"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="12dp"
+                app:cardCornerRadius="12dp"
+                app:cardElevation="1dp"
+                app:strokeWidth="1dp"
+                app:strokeColor="?attr/colorOutlineVariant">
+
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:gravity="center_vertical"
+                    android:orientation="horizontal"
+                    android:padding="16dp">
+
+                    <ImageView
+                        android:layout_width="24dp"
+                        android:layout_height="24dp"
+                        android:src="@android:drawable/ic_menu_myplaces"
+                        app:tint="?attr/colorTertiary" />
+
+                    <LinearLayout
+                        android:layout_width="0dp"
+                        android:layout_height="wrap_content"
+                        android:layout_marginStart="12dp"
+                        android:layout_weight="1"
+                        android:orientation="vertical">
+
+                        <TextView
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:text="Assign Person (ContentProvider)"
+                            android:textSize="14sp"
+                            android:textStyle="bold" />
+
+                        <TextView
+                            android:id="@+id/tvContactText"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:text="Tap to assign contact"
+                            android:textColor="?android:attr/textColorSecondary"
+                            android:textSize="12sp" />
+                    </LinearLayout>
+                </LinearLayout>
+            </com.google.android.material.card.MaterialCardView>
+
+        </LinearLayout>
+    </androidx.core.widget.NestedScrollView>
+
+    <com.google.android.material.floatingactionbutton.FloatingActionButton
+        android:id="@+id/fabSaveTask"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_gravity="bottom|end"
+        android:layout_margin="16dp"
+        android:contentDescription="Save Task"
+        app:srcCompat="@android:drawable/ic_menu_save" />
+
+</androidx.coordinatorlayout.widget.CoordinatorLayout>
