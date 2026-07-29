@@ -5,6 +5,7 @@ import android.os.Bundle
 import androidx.activity.enableEdgeToEdge
 import androidx.appcompat.app.AppCompatActivity
 import com.example.databinding.ActivityMainBinding
+import com.example.ui.activity.ManualStoreOwnerActivity
 import com.example.ui.activity.SettingsComposeActivity
 import com.example.ui.activity.SettingsXmlActivity
 import com.example.ui.activity.TaskAnalyticsComposeActivity
@@ -72,6 +73,16 @@ class MainActivity : AppCompatActivity() {
         }
         binding.btnOpenSettingsXml.setOnClickListener {
             startActivity(Intent(this, SettingsXmlActivity::class.java))
+        }
+
+        // 5. ViewModel Creation Paradigms Pair
+        binding.btnOpenStandardViewModel.setOnClickListener {
+            // Demonstrates standard Android 'by viewModels()' delegate on Activity
+            startActivity(Intent(this, TaskListComposeActivity::class.java))
+        }
+        binding.btnOpenManualViewModel.setOnClickListener {
+            // Demonstrates manual ViewModelStoreOwner implementation from scratch
+            startActivity(Intent(this, ManualStoreOwnerActivity::class.java))
         }
     }
 }
