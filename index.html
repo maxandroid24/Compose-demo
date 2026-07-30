@@ -1,0 +1,1005 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Android Technical Architecture & Implementation Hub | Personal Task Manager</title>
+  <!-- Google Fonts -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet">
+  
+  <style>
+    :root {
+      --bg-dark: #090D16;
+      --bg-card: #111827;
+      --bg-card-hover: #1F2937;
+      --border-color: #1F2937;
+      --border-highlight: #374151;
+      
+      --accent-primary: #6366F1;
+      --accent-primary-hover: #4F46E5;
+      --accent-glow: rgba(99, 102, 241, 0.25);
+      
+      --accent-secondary: #8B5CF6;
+      --accent-success: #10B981;
+      --accent-warning: #F59E0B;
+      --accent-danger: #EF4444;
+      --accent-cyan: #06B6D4;
+      
+      --text-main: #F9FAFB;
+      --text-muted: #9CA3AF;
+      --text-dim: #6B7280;
+      
+      --font-main: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
+      --font-mono: 'JetBrains Mono', monospace;
+    }
+
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+    }
+
+    html {
+      scroll-behavior: smooth;
+    }
+
+    body {
+      background-color: var(--bg-dark);
+      color: var(--text-main);
+      font-family: var(--font-main);
+      line-height: 1.6;
+      overflow-x: hidden;
+    }
+
+    /* Layout Wrapper */
+    .app-container {
+      display: flex;
+      min-height: 100vh;
+    }
+
+    /* Sidebar Navigation */
+    .sidebar {
+      width: 280px;
+      background-color: rgba(17, 24, 39, 0.95);
+      backdrop-filter: blur(12px);
+      border-right: 1px solid var(--border-color);
+      padding: 24px 16px;
+      position: fixed;
+      top: 0;
+      bottom: 0;
+      left: 0;
+      z-index: 100;
+      display: flex;
+      flex-direction: column;
+      gap: 24px;
+      overflow-y: auto;
+    }
+
+    .brand-logo {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      padding: 8px 12px;
+      background: linear-gradient(135deg, rgba(99, 102, 241, 0.15), rgba(139, 92, 246, 0.15));
+      border: 1px solid rgba(99, 102, 241, 0.3);
+      border-radius: 12px;
+    }
+
+    .brand-logo svg {
+      width: 28px;
+      height: 28px;
+      fill: var(--accent-primary);
+    }
+
+    .brand-logo h1 {
+      font-size: 16px;
+      font-weight: 700;
+      background: linear-gradient(90deg, #A5B4FC, #C084FC);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+    }
+
+    .nav-group {
+      display: flex;
+      flex-direction: column;
+      gap: 4px;
+    }
+
+    .nav-label {
+      font-size: 11px;
+      font-weight: 700;
+      text-transform: uppercase;
+      letter-spacing: 1px;
+      color: var(--text-dim);
+      padding: 8px 12px 4px 12px;
+    }
+
+    .nav-link {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      padding: 10px 14px;
+      color: var(--text-muted);
+      text-decoration: none;
+      font-size: 14px;
+      font-weight: 500;
+      border-radius: 8px;
+      transition: all 0.2s ease;
+    }
+
+    .nav-link:hover, .nav-link.active {
+      color: var(--text-main);
+      background-color: rgba(99, 102, 241, 0.12);
+      border-left: 3px solid var(--accent-primary);
+    }
+
+    .nav-link svg {
+      width: 18px;
+      height: 18px;
+      stroke: currentColor;
+    }
+
+    /* Main Content Area */
+    .main-content {
+      margin-left: 280px;
+      flex: 1;
+      padding: 40px 48px;
+      max-width: 1320px;
+    }
+
+    /* Header & Top Bar */
+    .top-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 40px;
+      padding-bottom: 24px;
+      border-bottom: 1px solid var(--border-color);
+    }
+
+    .page-title h2 {
+      font-size: 32px;
+      font-weight: 800;
+      letter-spacing: -0.5px;
+      background: linear-gradient(90deg, #FFFFFF, #9CA3AF);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+    }
+
+    .page-title p {
+      color: var(--text-muted);
+      font-size: 15px;
+      margin-top: 4px;
+    }
+
+    .search-box {
+      position: relative;
+      width: 340px;
+    }
+
+    .search-box input {
+      width: 100%;
+      background-color: var(--bg-card);
+      border: 1px solid var(--border-color);
+      border-radius: 10px;
+      padding: 10px 16px 10px 40px;
+      color: var(--text-main);
+      font-size: 14px;
+      outline: none;
+      transition: border-color 0.2s;
+    }
+
+    .search-box input:focus {
+      border-color: var(--accent-primary);
+      box-shadow: 0 0 0 3px var(--accent-glow);
+    }
+
+    .search-box svg {
+      position: absolute;
+      left: 12px;
+      top: 50%;
+      transform: translateY(-50%);
+      width: 18px;
+      height: 18px;
+      stroke: var(--text-dim);
+    }
+
+    /* Hero Banner */
+    .hero-banner {
+      background: linear-gradient(135deg, rgba(99, 102, 241, 0.12), rgba(139, 92, 246, 0.08));
+      border: 1px solid rgba(99, 102, 241, 0.25);
+      border-radius: 16px;
+      padding: 32px;
+      margin-bottom: 40px;
+      display: grid;
+      grid-template-columns: 2fr 1fr;
+      gap: 32px;
+      position: relative;
+      overflow: hidden;
+    }
+
+    .hero-banner::after {
+      content: '';
+      position: absolute;
+      top: -50%;
+      right: -20%;
+      width: 350px;
+      height: 350px;
+      background: radial-gradient(circle, var(--accent-glow) 0%, transparent 70%);
+      pointer-events: none;
+    }
+
+    .hero-text h3 {
+      font-size: 24px;
+      font-weight: 700;
+      margin-bottom: 12px;
+      color: #E0E7FF;
+    }
+
+    .hero-text p {
+      color: #9CA3AF;
+      font-size: 15px;
+      margin-bottom: 20px;
+    }
+
+    .hero-badges {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 8px;
+    }
+
+    .badge {
+      background: rgba(31, 41, 55, 0.8);
+      border: 1px solid var(--border-highlight);
+      color: #D1D5DB;
+      padding: 4px 12px;
+      border-radius: 20px;
+      font-size: 12px;
+      font-weight: 600;
+    }
+
+    .badge.primary {
+      background: rgba(99, 102, 241, 0.2);
+      border-color: rgba(99, 102, 241, 0.4);
+      color: #A5B4FC;
+    }
+
+    .badge.success {
+      background: rgba(16, 185, 129, 0.15);
+      border-color: rgba(16, 185, 129, 0.3);
+      color: #6EE7B7;
+    }
+
+    .hero-stats {
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+      gap: 16px;
+      border-left: 1px solid var(--border-color);
+      padding-left: 32px;
+    }
+
+    .stat-item {
+      display: flex;
+      flex-direction: column;
+    }
+
+    .stat-value {
+      font-size: 24px;
+      font-weight: 800;
+      color: var(--accent-primary);
+    }
+
+    .stat-label {
+      font-size: 13px;
+      color: var(--text-dim);
+    }
+
+    /* Section Component */
+    .section-card {
+      background-color: var(--bg-card);
+      border: 1px solid var(--border-color);
+      border-radius: 16px;
+      padding: 32px;
+      margin-bottom: 40px;
+    }
+
+    .section-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 24px;
+      padding-bottom: 16px;
+      border-bottom: 1px solid var(--border-color);
+    }
+
+    .section-header h3 {
+      font-size: 20px;
+      font-weight: 700;
+      display: flex;
+      align-items: center;
+      gap: 10px;
+    }
+
+    .section-header h3 svg {
+      width: 22px;
+      height: 22px;
+      stroke: var(--accent-primary);
+    }
+
+    /* Interactive Architecture Diagram */
+    .arch-diagram-wrapper {
+      display: grid;
+      grid-template-columns: 1fr 380px;
+      gap: 24px;
+    }
+
+    .arch-canvas {
+      display: flex;
+      flex-direction: column;
+      gap: 16px;
+    }
+
+    .arch-layer {
+      background: rgba(31, 41, 55, 0.4);
+      border: 1px solid var(--border-color);
+      border-radius: 12px;
+      padding: 16px;
+      transition: all 0.25s ease;
+      cursor: pointer;
+    }
+
+    .arch-layer:hover, .arch-layer.selected {
+      border-color: var(--accent-primary);
+      background: rgba(99, 102, 241, 0.08);
+      box-shadow: 0 4px 20px rgba(0, 0, 0, 0.3);
+    }
+
+    .layer-title {
+      font-size: 14px;
+      font-weight: 700;
+      color: var(--accent-primary);
+      margin-bottom: 10px;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+    }
+
+    .layer-nodes {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 8px;
+    }
+
+    .node-pill {
+      background: var(--bg-dark);
+      border: 1px solid var(--border-color);
+      padding: 6px 12px;
+      border-radius: 6px;
+      font-size: 13px;
+      font-family: var(--font-mono);
+      color: #E5E7EB;
+    }
+
+    .arch-details-panel {
+      background: rgba(17, 24, 39, 0.8);
+      border: 1px solid var(--border-highlight);
+      border-radius: 12px;
+      padding: 24px;
+      display: flex;
+      flex-direction: column;
+      gap: 16px;
+    }
+
+    .arch-details-panel h4 {
+      font-size: 18px;
+      color: var(--accent-primary);
+    }
+
+    .arch-details-panel p {
+      font-size: 14px;
+      color: var(--text-muted);
+    }
+
+    /* Comparative Table Styling */
+    .filter-tabs {
+      display: flex;
+      gap: 8px;
+      margin-bottom: 20px;
+      overflow-x: auto;
+      padding-bottom: 4px;
+    }
+
+    .tab-btn {
+      background: var(--bg-dark);
+      border: 1px solid var(--border-color);
+      color: var(--text-muted);
+      padding: 8px 16px;
+      border-radius: 8px;
+      font-size: 13px;
+      font-weight: 600;
+      cursor: pointer;
+      white-space: nowrap;
+      transition: all 0.2s;
+    }
+
+    .tab-btn:hover, .tab-btn.active {
+      background: var(--accent-primary);
+      color: #FFFFFF;
+      border-color: var(--accent-primary);
+    }
+
+    .comparison-table-wrapper {
+      overflow-x: auto;
+      border-radius: 12px;
+      border: 1px solid var(--border-color);
+    }
+
+    table.comparison-table {
+      width: 100%;
+      border-collapse: collapse;
+      text-align: left;
+      font-size: 14px;
+    }
+
+    table.comparison-table th {
+      background: #1F2937;
+      color: #F3F4F6;
+      padding: 14px 18px;
+      font-weight: 600;
+      border-bottom: 1px solid var(--border-highlight);
+    }
+
+    table.comparison-table td {
+      padding: 16px 18px;
+      border-bottom: 1px solid var(--border-color);
+      color: var(--text-muted);
+      vertical-align: top;
+    }
+
+    table.comparison-table tr:hover td {
+      background-color: rgba(31, 41, 55, 0.4);
+    }
+
+    .tag-highlight {
+      color: #F3F4F6;
+      font-weight: 600;
+    }
+
+    .badge-check {
+      color: var(--accent-success);
+      font-weight: bold;
+    }
+
+    .badge-cross {
+      color: var(--accent-danger);
+      font-weight: bold;
+    }
+
+    /* Code Snippet Box */
+    .code-block {
+      background-color: #0D1117;
+      border: 1px solid #30363D;
+      border-radius: 10px;
+      overflow: hidden;
+      margin-top: 16px;
+    }
+
+    .code-header {
+      background-color: #161B22;
+      padding: 10px 16px;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      border-bottom: 1px solid #30363D;
+      font-family: var(--font-mono);
+      font-size: 13px;
+      color: #C9D1D9;
+    }
+
+    .code-content {
+      padding: 16px;
+      font-family: var(--font-mono);
+      font-size: 13px;
+      color: #E6EDE3;
+      overflow-x: auto;
+      line-height: 1.5;
+    }
+
+    .code-keyword { color: #FF7B72; }
+    .code-function { color: #D2A8FF; }
+    .code-type { color: #79C0FF; }
+    .code-string { color: #A5D6FF; }
+    .code-comment { color: #8B949E; font-style: italic; }
+
+    /* Under-the-hood Cards Grid */
+    .mechanics-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+      gap: 20px;
+    }
+
+    .mechanic-card {
+      background: rgba(31, 41, 55, 0.3);
+      border: 1px solid var(--border-color);
+      border-radius: 12px;
+      padding: 20px;
+      transition: transform 0.2s, border-color 0.2s;
+    }
+
+    .mechanic-card:hover {
+      transform: translateY(-4px);
+      border-color: var(--accent-secondary);
+    }
+
+    .mechanic-card h4 {
+      font-size: 16px;
+      color: var(--accent-secondary);
+      margin-bottom: 8px;
+    }
+
+    .mechanic-card p {
+      font-size: 13px;
+      color: var(--text-muted);
+    }
+
+    /* Google Docs Reference Cards */
+    .ref-link-card {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 14px 18px;
+      background: var(--bg-dark);
+      border: 1px solid var(--border-color);
+      border-radius: 10px;
+      text-decoration: none;
+      color: var(--text-main);
+      margin-bottom: 10px;
+      transition: all 0.2s;
+    }
+
+    .ref-link-card:hover {
+      border-color: var(--accent-cyan);
+      background: rgba(6, 182, 212, 0.08);
+    }
+
+    .ref-link-info h5 {
+      font-size: 14px;
+      font-weight: 600;
+      color: #E0F2FE;
+    }
+
+    .ref-link-info p {
+      font-size: 12px;
+      color: var(--text-dim);
+    }
+
+    /* Responsive */
+    @media (max-width: 1024px) {
+      .sidebar { width: 80px; padding: 16px 8px; }
+      .sidebar .brand-logo h1, .sidebar .nav-label, .sidebar .nav-link span { display: none; }
+      .main-content { margin-left: 80px; padding: 24px; }
+      .arch-diagram-wrapper { grid-template-columns: 1fr; }
+      .hero-banner { grid-template-columns: 1fr; }
+      .hero-stats { border-left: none; padding-left: 0; border-top: 1px solid var(--border-color); padding-top: 20px; }
+    }
+  </style>
+</head>
+<body>
+
+  <div class="app-container">
+    
+    <!-- Sidebar Navigation -->
+    <aside class="sidebar">
+      <div class="brand-logo">
+        <svg viewBox="0 0 24 24"><path d="M12 2L2 7l10 5 10-5-10-5zM2 17l10 5 10-5M2 12l10 5 10-5"/></svg>
+        <h1>Android Arch Hub</h1>
+      </div>
+
+      <div class="nav-group">
+        <div class="nav-label">Navigation</div>
+        <a href="#overview" class="nav-link active">
+          <svg fill="none" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 12l2-2m0 0l7-7 7 7M5 10v10a1 1 0 001 1h3m10-11l2 2m-2-2v10a1 1 0 01-1 1h-3m-6 0a1 1 0 001-1v-4a1 1 0 011-1h2a1 1 0 011 1v4a1 1 0 001 1m-6 0h6"/></svg>
+          <span>System Overview</span>
+        </a>
+        <a href="#architecture" class="nav-link">
+          <svg fill="none" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 11H5m14 0a2 2 0 012 2v6a2 2 0 01-2 2H5a2 2 0 01-2-2v-6a2 2 0 012-2m14 0V9a2 2 0 00-2-2M5 11V9a2 2 0 012-2m0 0V5a2 2 0 012-2h6a2 2 0 012 2v2M7 7h10"/></svg>
+          <span>Clean Architecture</span>
+        </a>
+        <a href="#comparisons" class="nav-link">
+          <svg fill="none" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10m-6 0a2 2 0 002 2h2a2 2 0 002-2m0 0V5a2 2 0 012-2h2a2 2 0 012 2v14a2 2 0 01-2 2h-2a2 2 0 01-2-2z"/></svg>
+          <span>Approach Matrix</span>
+        </a>
+        <a href="#code-references" class="nav-link">
+          <svg fill="none" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 20l4-16m4 4l4 4-4 4M6 16l-4-4 4-4"/></svg>
+          <span>Code References</span>
+        </a>
+        <a href="#under-the-hood" class="nav-link">
+          <svg fill="none" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 10V3L4 14h7v7l9-11h-7z"/></svg>
+          <span>Under The Hood</span>
+        </a>
+        <a href="#references" class="nav-link">
+          <svg fill="none" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 6.253v13m0-13C10.832 5.477 9.246 5 7.5 5S4.168 5.477 3 6.253v13C4.168 18.477 5.754 18 7.5 18s3.332.477 4.5 1.253m0-13C13.168 5.477 14.754 5 16.5 5c1.747 0 3.332.477 4.5 1.253v13C19.832 18.477 18.247 18 16.5 18c-1.746 0-3.332.477-4.5 1.253"/></svg>
+          <span>Google Dev Guides</span>
+        </a>
+      </div>
+    </aside>
+
+    <!-- Main Content -->
+    <main class="main-content">
+      
+      <!-- Top Header -->
+      <header class="top-header">
+        <div class="page-title">
+          <h2>Technical Architecture & Implementation</h2>
+          <p>Exhaustive analysis of Personal Task Manager Android application stack</p>
+        </div>
+        <div class="search-box">
+          <svg fill="none" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"/></svg>
+          <input type="text" id="searchInput" placeholder="Search components, code, approaches...">
+        </div>
+      </header>
+
+      <!-- Hero Banner -->
+      <section id="overview" class="hero-banner">
+        <div class="hero-text">
+          <h3>Production-Ready Modern Android Stack</h3>
+          <p>Built with Jetpack Compose (Material 3), 3-Layer Clean Architecture, Room Database, Retrofit REST API, WorkManager, Coroutines & Flow, System Receivers & Content Providers.</p>
+          <div class="hero-badges">
+            <span class="badge primary">Jetpack Compose</span>
+            <span class="badge primary">Clean Architecture</span>
+            <span class="badge success">Offline-First Room</span>
+            <span class="badge">Retrofit + Moshi</span>
+            <span class="badge">WorkManager Sync</span>
+            <span class="badge">AppContainer DI</span>
+          </div>
+        </div>
+        <div class="hero-stats">
+          <div class="stat-item">
+            <span class="stat-value">3 Layers</span>
+            <span class="stat-label">Presentation, Domain, Data</span>
+          </div>
+          <div class="stat-item">
+            <span class="stat-value">100% Offline</span>
+            <span class="stat-label">Reactive Flow Sync Pipeline</span>
+          </div>
+          <div class="stat-item">
+            <span class="stat-value">0 ms DI Build</span>
+            <span class="stat-label">Manual AppContainer Container</span>
+          </div>
+        </div>
+      </section>
+
+      <!-- Interactive Architecture Topology -->
+      <section id="architecture" class="section-card">
+        <div class="section-header">
+          <h3>
+            <svg fill="none" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 11H5m14 0a2 2 0 012 2v6a2 2 0 01-2 2H5a2 2 0 01-2-2v-6a2 2 0 012-2m14 0V9a2 2 0 00-2-2M5 11V9a2 2 0 012-2m0 0V5a2 2 0 012-2h6a2 2 0 012 2v2M7 7h10"/></svg>
+            Interactive Clean Architecture Topology
+          </h3>
+        </div>
+
+        <div class="arch-diagram-wrapper">
+          <div class="arch-canvas">
+            <div class="arch-layer selected" onclick="selectLayer('presentation')">
+              <div class="layer-title">
+                <span>1. Presentation Layer (UI & ViewModels)</span>
+                <span class="badge primary">Jetpack Compose</span>
+              </div>
+              <div class="layer-nodes">
+                <span class="node-pill">MainActivity</span>
+                <span class="node-pill">TaskListScreen</span>
+                <span class="node-pill">TaskDetailScreen</span>
+                <span class="node-pill">TaskViewModel</span>
+                <span class="node-pill">TaskUiState</span>
+              </div>
+            </div>
+
+            <div class="arch-layer" onclick="selectLayer('domain')">
+              <div class="layer-title">
+                <span>2. Domain Layer (Pure Business Logic)</span>
+                <span class="badge success">Pure Kotlin</span>
+              </div>
+              <div class="layer-nodes">
+                <span class="node-pill">GetTasksUseCase</span>
+                <span class="node-pill">AddTaskUseCase</span>
+                <span class="node-pill">SyncTasksUseCase</span>
+                <span class="node-pill">TaskRepository (Interface)</span>
+              </div>
+            </div>
+
+            <div class="arch-layer" onclick="selectLayer('data')">
+              <div class="layer-title">
+                <span>3. Data Layer (Persistence & OS Services)</span>
+                <span class="badge">Room + Retrofit</span>
+              </div>
+              <div class="layer-nodes">
+                <span class="node-pill">TaskRepositoryImpl</span>
+                <span class="node-pill">TaskDatabase (Room)</span>
+                <span class="node-pill">TaskApiService (Retrofit)</span>
+                <span class="node-pill">WorkManagerScheduler</span>
+                <span class="node-pill">NetworkConnectivityReceiver</span>
+              </div>
+            </div>
+
+            <div class="arch-layer" onclick="selectLayer('di')">
+              <div class="layer-title">
+                <span>4. Dependency Injection</span>
+                <span class="badge">AppContainer</span>
+              </div>
+              <div class="layer-nodes">
+                <span class="node-pill">AppContainer</span>
+                <span class="node-pill">TaskApplication</span>
+                <span class="node-pill">ViewModelFactory</span>
+              </div>
+            </div>
+          </div>
+
+          <!-- Dynamic Layer Details Panel -->
+          <div class="arch-details-panel" id="layerDetails">
+            <h4 id="layerTitle">Presentation Layer</h4>
+            <p id="layerDesc">Contains declarative Jetpack Compose screens, Fragment hosts, and TaskViewModel. State flows reactively to UI components via StateFlow.</p>
+            <div class="badge primary" style="align-self: flex-start;" id="layerBadge">MVVM + Jetpack Compose</div>
+          </div>
+        </div>
+      </section>
+
+      <!-- Comparative Matrix -->
+      <section id="comparisons" class="section-card">
+        <div class="section-header">
+          <h3>
+            <svg fill="none" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10m-6 0a2 2 0 002 2h2a2 2 0 002-2m0 0V5a2 2 0 012-2h2a2 2 0 012 2v14a2 2 0 01-2 2h-2a2 2 0 01-2-2z"/></svg>
+            In-Depth Comparative Analysis: Implemented vs Alternative Approaches
+          </h3>
+        </div>
+
+        <div class="filter-tabs">
+          <button class="tab-btn active" onclick="filterTable('all')">All Categories</button>
+          <button class="tab-btn" onclick="filterTable('arch')">Architecture</button>
+          <button class="tab-btn" onclick="filterTable('ui')">UI Engine</button>
+          <button class="tab-btn" onclick="filterTable('db')">Database</button>
+          <button class="tab-btn" onclick="filterTable('async')">Async & Streaming</button>
+          <button class="tab-btn" onclick="filterTable('bg')">Background Jobs</button>
+          <button class="tab-btn" onclick="filterTable('di')">Dependency Injection</button>
+        </div>
+
+        <div class="comparison-table-wrapper">
+          <table class="comparison-table" id="comparisonTable">
+            <thead>
+              <tr>
+                <th>Category</th>
+                <th>Implemented Approach</th>
+                <th>Alternative Approach</th>
+                <th>Key Differences & Trade-offs</th>
+                <th>Recommendation</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr data-cat="arch">
+                <td><span class="tag-highlight">Architecture</span></td>
+                <td><strong>Clean Architecture + MVVM</strong></td>
+                <td>Monolithic / Standard MVVM</td>
+                <td>Strict 3-layer isolation (Domain layer 100% framework free). High testability, decoupled use cases, but requires ~20% more boilerplate.</td>
+                <td><span class="badge-check">✓ Best for production & scale</span></td>
+              </tr>
+              <tr data-cat="ui">
+                <td><span class="tag-highlight">UI Engine</span></td>
+                <td><strong>Jetpack Compose (Material 3)</strong></td>
+                <td>Traditional XML Views & Layouts</td>
+                <td>Declarative state recomposition vs. imperative View mutation (`setText()`). 50% code reduction, zero layout inflation XML parsing overhead.</td>
+                <td><span class="badge-check">✓ Modern Google Standard</span></td>
+              </tr>
+              <tr data-cat="db">
+                <td><span class="tag-highlight">Database</span></td>
+                <td><strong>Room ORM + Kotlin Flow</strong></td>
+                <td>Raw SQLiteOpenHelper / Realm</td>
+                <td>Compile-time SQL safety (KSP verification), reactive automatic UI updates via Flow queries, destructible migration handling.</td>
+                <td><span class="badge-check">✓ Android Jetpack Benchmark</span></td>
+              </tr>
+              <tr data-cat="async">
+                <td><span class="tag-highlight">Async Data</span></td>
+                <td><strong>Kotlin Coroutines & StateFlow</strong></td>
+                <td>RxJava 3 / LiveData</td>
+                <td>Sequential async code syntax, structured concurrency cancellation propagation, lifecycle-aware collection with `repeatOnLifecycle`.</td>
+                <td><span class="badge-check">✓ Native Kotlin Idiomatic</span></td>
+              </tr>
+              <tr data-cat="bg">
+                <td><span class="tag-highlight">Background Work</span></td>
+                <td><strong>WorkManager (CoroutineWorker)</strong></td>
+                <td>AlarmManager / JobScheduler</td>
+                <td>Guaranteed persistent execution across app restarts & system reboots via SQLite DB backend. Battery Doze-mode compliant.</td>
+                <td><span class="badge-check">✓ Required for Offline Sync</span></td>
+              </tr>
+              <tr data-cat="di">
+                <td><span class="tag-highlight">Dependency Injection</span></td>
+                <td><strong>Manual AppContainer</strong></td>
+                <td>Google Hilt / Dagger / Koin</td>
+                <td>100% explicit Kotlin singletons, 0 ms compilation overhead (no KSP codegen), total transparency, instant build speeds.</td>
+                <td><span class="badge-check">✓ Lightning Fast Builds</span></td>
+              </tr>
+              <tr data-cat="async">
+                <td><span class="tag-highlight">JSON Parsing</span></td>
+                <td><strong>Retrofit 2 + Moshi</strong></td>
+                <td>Gson / Volley</td>
+                <td>Moshi respects Kotlin non-nullability constraints & default parameter values; Gson bypasses constructor safety with reflection.</td>
+                <td><span class="badge-check">✓ Type-Safe JSON Parsing</span></td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+      </section>
+
+      <!-- Code References -->
+      <section id="code-references" class="section-card">
+        <div class="section-header">
+          <h3>
+            <svg fill="none" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 20l4-16m4 4l4 4-4 4M6 16l-4-4 4-4"/></svg>
+            Key Implementation Code Snippets
+          </h3>
+        </div>
+
+        <div class="code-block">
+          <div class="code-header">
+            <span>TaskRepositoryImpl.kt — Offline-First Flow Mapping</span>
+            <span class="badge success">Data Layer</span>
+          </div>
+          <pre class="code-content"><code><span class="code-keyword">override fun</span> <span class="code-function">getTasks</span>(): <span class="code-type">Flow&lt;List&lt;Task&gt;&gt;</span> {
+    <span class="code-keyword">return</span> taskDao.<span class="code-function">getAllTasks</span>().<span class="code-function">map</span> { entities ->
+        entities.<span class="code-function">map</span> { it.<span class="code-function">toDomain</span>() }
+    }
+}
+
+<span class="code-keyword">override suspend fun</span> <span class="code-function">addTask</span>(task: <span class="code-type">Task</span>) {
+    <span class="code-keyword">val</span> newTask = task.<span class="code-function">copy</span>(syncStatus = SyncStatus.PENDING_INSERT)
+    taskDao.<span class="code-function">insertTask</span>(newTask.<span class="code-function">toEntity</span>())
+    workManagerScheduler.<span class="code-function">scheduleOneTimeSync</span>()
+}</code></pre>
+        </div>
+
+        <div class="code-block">
+          <div class="code-header">
+            <span>AppContainer.kt — Manual Thread-Safe Singleton DI</span>
+            <span class="badge primary">DI Layer</span>
+          </div>
+          <pre class="code-content"><code><span class="code-keyword">class</span> <span class="code-type">AppContainer</span>(context: <span class="code-type">Context</span>) {
+    <span class="code-keyword">val</span> database: <span class="code-type">TaskDatabase</span> <span class="code-keyword">by</span> lazy {
+        Room.<span class="code-function">databaseBuilder</span>(context.applicationContext, TaskDatabase::<span class="code-keyword">class</span>.java, <span class="code-string">"task_db"</span>).<span class="code-function">build</span>()
+    }
+    <span class="code-keyword">val</span> taskRepository: <span class="code-type">TaskRepository</span> <span class="code-keyword">by</span> lazy {
+        TaskRepositoryImpl(database.taskDao(), apiService, workManagerScheduler)
+    }
+}</code></pre>
+        </div>
+      </section>
+
+      <!-- Under The Hood -->
+      <section id="under-the-hood" class="section-card">
+        <div class="section-header">
+          <h3>
+            <svg fill="none" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 10V3L4 14h7v7l9-11h-7z"/></svg>
+            Under-The-Hood Engine Mechanics
+          </h3>
+        </div>
+
+        <div class="mechanics-grid">
+          <div class="mechanic-card">
+            <h4>Compose Slot Table</h4>
+            <p>Compose records composables in a Bit-Stream Slot Table during initial render. Recomposition skip logic bypasses unchanged composables based on `@Stable` parameter equality check.</p>
+          </div>
+          <div class="mechanic-card">
+            <h4>Room KSP Code Generator</h4>
+            <p>Kotlin Symbol Processing validates SQL query syntax at compile time and auto-generates SQLite DAO binding bytecode and InvalidationTrackers for live Flows.</p>
+          </div>
+          <div class="mechanic-card">
+            <h4>WorkManager SQLite Queue</h4>
+            <p>WorkManager persists job execution requests into a system `/databases/androidx.work.workdb` database. Survives device reboots via `ACTION_BOOT_COMPLETED` receiver.</p>
+          </div>
+          <div class="mechanic-card">
+            <h4>Coroutine State Machines</h4>
+            <p>Kotlin compiler rewrites `suspend` functions into `ContinuationImpl` state machine bytecode, suspending and resuming execution without locking OS threads.</p>
+          </div>
+        </div>
+      </section>
+
+      <!-- Official References -->
+      <section id="references" class="section-card">
+        <div class="section-header">
+          <h3>
+            <svg fill="none" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 6.253v13m0-13C10.832 5.477 9.246 5 7.5 5S4.168 5.477 3 6.253v13C4.168 18.477 5.754 18 7.5 18s3.332.477 4.5 1.253m0-13C13.168 5.477 14.754 5 16.5 5c1.747 0 3.332.477 4.5 1.253v13C19.832 18.477 18.247 18 16.5 18c-1.746 0-3.332.477-4.5 1.253"/></svg>
+            Google Developers Official Documentation & References
+          </h3>
+        </div>
+
+        <a href="https://developer.android.com/topic/architecture" target="_blank" class="ref-link-card">
+          <div class="ref-link-info">
+            <h5>Android Guide to App Architecture</h5>
+            <p>Official Google recommendations on Clean Architecture, data layer separation, and offline-first repositories.</p>
+          </div>
+          <svg width="20" height="20" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 6H6a2 2 0 00-2 2v10a2 2 0 002 2h10a2 2 0 002-2v-4M14 4h6m0 0v6m0-6L10 14"/></svg>
+        </a>
+
+        <a href="https://developer.android.com/jetpack/compose/mental-model" target="_blank" class="ref-link-card">
+          <div class="ref-link-info">
+            <h5>Jetpack Compose Mental Model</h5>
+            <p>How the declarative recomposition engine replaces legacy imperative XML layout passes.</p>
+          </div>
+          <svg width="20" height="20" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 6H6a2 2 0 00-2 2v10a2 2 0 002 2h10a2 2 0 002-2v-4M14 4h6m0 0v6m0-6L10 14"/></svg>
+        </a>
+
+        <a href="https://developer.android.com/topic/libraries/architecture/workmanager" target="_blank" class="ref-link-card">
+          <div class="ref-link-info">
+            <h5>WorkManager Background Architecture</h5>
+            <p>Guaranteed persistent task execution, battery optimization, and constraint-aware scheduling.</p>
+          </div>
+          <svg width="20" height="20" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 6H6a2 2 0 00-2 2v10a2 2 0 002 2h10a2 2 0 002-2v-4M14 4h6m0 0v6m0-6L10 14"/></svg>
+        </a>
+      </section>
+
+    </main>
+  </div>
+
+  <script>
+    // Layer interactive details
+    const layerData = {
+      presentation: {
+        title: '1. Presentation Layer (UI & MVVM)',
+        desc: 'Contains Jetpack Compose declarative screens (TaskListScreen, TaskDetailScreen), Fragment hosts, and TaskViewModel. State flows reactively via StateFlow to UI composables.',
+        badge: 'Jetpack Compose + MVVM'
+      },
+      domain: {
+        title: '2. Domain Layer (Pure Business Logic)',
+        desc: 'Contains 100% framework-independent Kotlin code. Defines single-responsibility use cases (GetTasksUseCase, AddTaskUseCase, SyncTasksUseCase) and the TaskRepository interface contract.',
+        badge: 'Pure Kotlin Use Cases'
+      },
+      data: {
+        title: '3. Data Layer (Persistence & System Services)',
+        desc: 'Implements TaskRepositoryImpl. Combines local Room Database with Flow, Retrofit REST client, WorkManager background syncer, Network Receiver, and Contacts ContentProvider.',
+        badge: 'Room DB + Retrofit + WorkManager'
+      },
+      di: {
+        title: '4. Dependency Injection Container',
+        desc: 'Managed by AppContainer. Instantiates lazily-evaluated singletons (TaskDatabase, Retrofit, TaskRepositoryImpl) and constructs custom ViewModelProvider.Factory without build slowdowns.',
+        badge: 'Manual Thread-Safe AppContainer'
+      }
+    };
+
+    function selectLayer(layerKey) {
+      document.querySelectorAll('.arch-layer').forEach(el => el.classList.remove('selected'));
+      event.currentTarget.classList.add('selected');
+
+      const data = layerData[layerKey];
+      document.getElementById('layerTitle').innerText = data.title;
+      document.getElementById('layerDesc').innerText = data.desc;
+      document.getElementById('layerBadge').innerText = data.badge;
+    }
+
+    // Comparison Table Filtering
+    function filterTable(cat) {
+      document.querySelectorAll('.tab-btn').forEach(btn => btn.classList.remove('active'));
+      event.currentTarget.classList.add('active');
+
+      const rows = document.querySelectorAll('#comparisonTable tbody tr');
+      rows.forEach(row => {
+        if (cat === 'all' || row.getAttribute('data-cat') === cat) {
+          row.style.display = '';
+        } else {
+          row.style.display = 'none';
+        }
+      });
+    }
+
+    // Interactive Real-time Search
+    document.getElementById('searchInput').addEventListener('input', function(e) {
+      const term = e.target.value.toLowerCase();
+      const rows = document.querySelectorAll('#comparisonTable tbody tr');
+      rows.forEach(row => {
+        const text = row.innerText.toLowerCase();
+        row.style.display = text.includes(term) ? '' : 'none';
+      });
+    });
+  </script>
+
+</body>
+</html>
