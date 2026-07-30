@@ -4,36 +4,29 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:background="?android:attr/colorBackground">
+    android:background="@color/background">
 
     <com.google.android.material.appbar.AppBarLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
+        android:background="@color/background"
+        app:elevation="0dp"
         android:fitsSystemWindows="true">
 
-        <com.google.android.material.appbar.MaterialToolbar
-            android:id="@+id/toolbar"
-            android:layout_width="match_parent"
-            android:layout_height="?attr/actionBarSize"
-            app:title="Task Manager (XML)"
-            app:subtitle="📄 Traditional Android Layout"
-            app:navigationIcon="@drawable/ic_back" />
-
-        <!-- Banner showing comparison mode -->
         <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:background="#E8F0FE"
             android:orientation="horizontal"
             android:paddingHorizontal="16dp"
-            android:paddingVertical="8dp"
+            android:paddingVertical="6dp"
             android:gravity="center_vertical">
 
             <TextView
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
                 android:layout_weight="1"
-                android:text="📄 UI built using XML (RecyclerView + ConstraintLayout)"
+                android:text="⚡ Traditional XML Paradigm"
                 android:textColor="#1A73E8"
                 android:textSize="12sp"
                 android:textStyle="bold" />
@@ -48,123 +41,163 @@
                 android:textSize="11sp" />
         </LinearLayout>
 
+        <com.google.android.material.appbar.MaterialToolbar
+            android:id="@+id/toolbar"
+            android:layout_width="match_parent"
+            android:layout_height="?attr/actionBarSize"
+            app:contentInsetStart="0dp"
+            app:titleCentered="false">
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:gravity="center_vertical"
+                android:orientation="horizontal"
+                android:paddingHorizontal="16dp">
+
+                <ImageView
+                    android:layout_width="28dp"
+                    android:layout_height="28dp"
+                    android:src="@android:drawable/ic_menu_agenda"
+                    app:tint="@color/primary" />
+
+                <TextView
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1"
+                    android:layout_marginStart="8dp"
+                    android:text="My Tasks"
+                    android:textColor="@color/on_surface"
+                    android:textSize="22sp"
+                    android:textStyle="bold" />
+
+                <ImageButton
+                    android:id="@+id/btnNavAnalytics"
+                    android:layout_width="48dp"
+                    android:layout_height="48dp"
+                    android:background="?attr/selectableItemBackgroundBorderless"
+                    android:contentDescription="Analytics"
+                    android:src="@android:drawable/ic_menu_sort_by_size"
+                    app:tint="@color/on_surface_variant" />
+
+                <ImageButton
+                    android:id="@+id/btnNavSettings"
+                    android:layout_width="48dp"
+                    android:layout_height="48dp"
+                    android:background="?attr/selectableItemBackgroundBorderless"
+                    android:contentDescription="Settings"
+                    android:src="@android:drawable/ic_menu_preferences"
+                    app:tint="@color/on_surface_variant" />
+            </LinearLayout>
+        </com.google.android.material.appbar.MaterialToolbar>
+
     </com.google.android.material.appbar.AppBarLayout>
 
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:orientation="vertical"
+        android:paddingHorizontal="16dp"
         app:layout_behavior="@string/appbar_scrolling_view_behavior">
 
-        <!-- Search Bar -->
         <com.google.android.material.textfield.TextInputLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_margin="12dp"
+            android:layout_marginTop="12dp"
+            android:layout_marginBottom="12dp"
             style="@style/Widget.Material3.TextInputLayout.OutlinedBox"
             app:startIconDrawable="@android:drawable/ic_menu_search"
-            app:hintEnabled="true">
+            app:hintEnabled="false"
+            app:boxCornerRadiusTopStart="12dp"
+            app:boxCornerRadiusTopEnd="12dp"
+            app:boxCornerRadiusBottomStart="12dp"
+            app:boxCornerRadiusBottomEnd="12dp"
+            app:boxStrokeColor="@color/primary"
+            app:startIconTint="@color/on_surface">
 
             <com.google.android.material.textfield.TextInputEditText
                 android:id="@+id/etSearchQuery"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:hint="Search tasks..."
-                android:inputType="text" />
+                android:hint="Search task title or description..."
+                android:inputType="text"
+                android:paddingVertical="12dp" />
         </com.google.android.material.textfield.TextInputLayout>
 
-        <!-- Category Horizontal Filter Scroll -->
-        <HorizontalScrollView
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:scrollbars="none"
-            android:paddingHorizontal="12dp">
-
-            <com.google.android.material.chip.ChipGroup
-                android:id="@+id/chipGroupCategory"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                app:singleSelection="true">
-
-                <com.google.android.material.chip.Chip
-                    android:id="@+id/chipCatAll"
-                    style="@style/Widget.Material3.Chip.Filter"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:text="All Categories"
-                    android:checked="true" />
-
-                <com.google.android.material.chip.Chip
-                    android:id="@+id/chipCatPersonal"
-                    style="@style/Widget.Material3.Chip.Filter"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:text="Personal" />
-
-                <com.google.android.material.chip.Chip
-                    android:id="@+id/chipCatWork"
-                    style="@style/Widget.Material3.Chip.Filter"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:text="Work" />
-
-                <com.google.android.material.chip.Chip
-                    android:id="@+id/chipCatHealth"
-                    style="@style/Widget.Material3.Chip.Filter"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:text="Health" />
-
-                <com.google.android.material.chip.Chip
-                    android:id="@+id/chipCatFinance"
-                    style="@style/Widget.Material3.Chip.Filter"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:text="Finance" />
-
-                <com.google.android.material.chip.Chip
-                    android:id="@+id/chipCatEducation"
-                    style="@style/Widget.Material3.Chip.Filter"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:text="Education" />
-            </com.google.android.material.chip.ChipGroup>
-        </HorizontalScrollView>
-
-        <!-- Task Count & Quick Actions -->
         <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:orientation="horizontal"
-            android:paddingHorizontal="16dp"
-            android:paddingVertical="8dp"
-            android:gravity="center_vertical">
+            android:gravity="center_vertical"
+            android:layout_marginBottom="12dp">
 
-            <TextView
-                android:id="@+id/tvTaskCount"
-                android:layout_width="0dp"
-                android:layout_height="wrap_content"
-                android:layout_weight="1"
-                android:text="0 Tasks"
-                android:textSize="14sp"
-                android:textStyle="bold" />
+            <ImageView
+                android:layout_width="20dp"
+                android:layout_height="20dp"
+                android:src="@android:drawable/ic_menu_manage"
+                android:layout_marginEnd="8dp"
+                app:tint="@color/on_surface_variant"
+                android:contentDescription="Filter" />
 
-            <com.google.android.material.button.MaterialButton
-                android:id="@+id/btnNavAnalytics"
-                style="@style/Widget.Material3.Button.OutlinedButton"
-                android:layout_width="wrap_content"
+            <HorizontalScrollView
+                android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:text="Analytics"
-                android:textSize="12sp" />
+                android:scrollbars="none">
 
-            <com.google.android.material.button.MaterialButton
-                android:id="@+id/btnNavSettings"
-                style="@style/Widget.Material3.Button.OutlinedButton"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_marginStart="8dp"
-                android:text="Settings"
-                android:textSize="12sp" />
+                <com.google.android.material.chip.ChipGroup
+                    android:id="@+id/chipGroupCategory"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    app:singleSelection="true"
+                    app:selectionRequired="false">
+
+                    <com.google.android.material.chip.Chip
+                        android:id="@+id/chipCatAll"
+                        style="@style/Widget.Material3.Chip.Filter"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="All"
+                        android:checked="true"
+                        app:chipBackgroundColor="@color/primary_container"
+                        app:checkedIconVisible="false" />
+
+                    <com.google.android.material.chip.Chip
+                        android:id="@+id/chipCatWork"
+                        style="@style/Widget.Material3.Chip.Filter"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="WORK" />
+
+                    <com.google.android.material.chip.Chip
+                        android:id="@+id/chipCatPersonal"
+                        style="@style/Widget.Material3.Chip.Filter"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="PERSONAL" />
+
+                    <com.google.android.material.chip.Chip
+                        android:id="@+id/chipCatHealth"
+                        style="@style/Widget.Material3.Chip.Filter"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="HEALTH" />
+
+                    <com.google.android.material.chip.Chip
+                        android:id="@+id/chipCatFinance"
+                        style="@style/Widget.Material3.Chip.Filter"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="FINANCE" />
+
+                    <com.google.android.material.chip.Chip
+                        android:id="@+id/chipCatShopping"
+                        style="@style/Widget.Material3.Chip.Filter"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="SHOPPING" />
+
+                </com.google.android.material.chip.ChipGroup>
+            </HorizontalScrollView>
         </LinearLayout>
 
         <ProgressBar
@@ -174,17 +207,15 @@
             android:layout_gravity="center"
             android:visibility="gone" />
 
-        <!-- RecyclerView for Task items -->
         <androidx.recyclerview.widget.RecyclerView
             android:id="@+id/recyclerViewTasks"
             android:layout_width="match_parent"
             android:layout_height="0dp"
             android:layout_weight="1"
-            android:paddingHorizontal="12dp"
             android:clipToPadding="false"
+            android:paddingBottom="80dp"
             tools:listitem="@layout/item_task" />
 
-        <!-- Empty state layout -->
         <LinearLayout
             android:id="@+id/layoutEmpty"
             android:layout_width="match_parent"
@@ -195,19 +226,30 @@
             android:padding="24dp"
             android:visibility="gone">
 
+            <ImageView
+                android:layout_width="64dp"
+                android:layout_height="64dp"
+                android:src="@android:drawable/ic_menu_agenda"
+                app:tint="@color/primary"
+                android:alpha="0.4"
+                android:contentDescription="Empty" />
+
             <TextView
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
+                android:layout_marginTop="16dp"
                 android:text="No tasks found"
                 android:textSize="18sp"
-                android:textStyle="bold" />
+                android:textStyle="bold"
+                android:textColor="@color/on_surface_variant" />
 
             <TextView
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_marginTop="4dp"
                 android:text="Tap + to create a new task"
-                android:textColor="?android:attr/textColorSecondary" />
+                android:textColor="@color/on_surface_variant"
+                android:alpha="0.7" />
         </LinearLayout>
 
     </LinearLayout>
@@ -219,6 +261,9 @@
         android:layout_gravity="bottom|end"
         android:layout_margin="16dp"
         android:contentDescription="Add Task"
-        app:srcCompat="@android:drawable/ic_input_add" />
+        app:srcCompat="@android:drawable/ic_input_add"
+        app:backgroundTint="@color/primary"
+        app:tint="@color/on_primary"
+        app:shapeAppearanceOverlay="@style/ShapeAppearance.App.FAB" />
 
 </androidx.coordinatorlayout.widget.CoordinatorLayout>

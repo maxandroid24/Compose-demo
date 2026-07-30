@@ -23,6 +23,7 @@ data class Task(
     val assignedContactName: String? = null,
     val assignedContactPhone: String? = null,
     val createdAtMillis: Long = System.currentTimeMillis(),
+    val updatedAtMillis: Long = System.currentTimeMillis(),
     val syncStatus: SyncStatus = SyncStatus.SYNCED
 )
 

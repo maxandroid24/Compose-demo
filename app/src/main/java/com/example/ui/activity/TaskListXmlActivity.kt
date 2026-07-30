@@ -5,6 +5,7 @@ import android.os.Bundle
 import android.text.Editable
 import android.text.TextWatcher
 import android.view.View
+import androidx.activity.enableEdgeToEdge
 import androidx.activity.viewModels
 import androidx.appcompat.app.AlertDialog
 import androidx.appcompat.app.AppCompatActivity
@@ -35,6 +36,7 @@ class TaskListXmlActivity : AppCompatActivity() {
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
+        enableEdgeToEdge()
         binding = ActivityTaskListBinding.inflate(layoutInflater)
         setContentView(binding.root)
 
@@ -97,7 +99,7 @@ class TaskListXmlActivity : AppCompatActivity() {
                 binding.chipCatWork.id -> Category.WORK
                 binding.chipCatHealth.id -> Category.HEALTH
                 binding.chipCatFinance.id -> Category.FINANCE
-                binding.chipCatEducation.id -> Category.SHOPPING
+                binding.chipCatShopping.id -> Category.SHOPPING
                 else -> null
             }
             viewModel.onCategoryFilterSelected(selectedCategory)
@@ -111,7 +113,6 @@ class TaskListXmlActivity : AppCompatActivity() {
                     binding.progressBar.visibility = if (state.isLoading) View.VISIBLE else View.GONE
                     taskAdapter.submitList(state.tasks)
 
-                    binding.tvTaskCount.text = "${state.tasks.size} Tasks"
                     if (state.tasks.isEmpty() && !state.isLoading) {
                         binding.layoutEmpty.visibility = View.VISIBLE
                         binding.recyclerViewTasks.visibility = View.GONE

@@ -46,7 +46,7 @@ import javax.inject.Inject
 @OptIn(FlowPreview::class)
 @HiltViewModel
 class TaskViewModel @Inject constructor(
-    private val savedStateHandle: SavedStateHandle = SavedStateHandle(),
+    private val savedStateHandle: SavedStateHandle,
     private val getTasksUseCase: GetTasksUseCase,
     private val addTaskUseCase: AddTaskUseCase,
     private val updateTaskUseCase: UpdateTaskUseCase,

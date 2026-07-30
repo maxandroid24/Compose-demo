@@ -1,6 +1,7 @@
 package com.example.di
 
 import android.content.Context
+import androidx.lifecycle.SavedStateHandle
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.ViewModelProvider
 import androidx.room.Room
@@ -105,6 +106,7 @@ class AppContainer(context: Context) {
             override fun <T : ViewModel> create(modelClass: Class<T>): T {
                 if (modelClass.isAssignableFrom(TaskViewModel::class.java)) {
                     return TaskViewModel(
+                        savedStateHandle = SavedStateHandle(),
                         getTasksUseCase = getTasksUseCase,
                         addTaskUseCase = addTaskUseCase,
                         updateTaskUseCase = updateTaskUseCase,

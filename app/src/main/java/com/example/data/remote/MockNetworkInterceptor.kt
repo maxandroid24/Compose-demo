@@ -35,57 +35,13 @@ class MockNetworkInterceptor : Interceptor {
                 """
                 {
                   "success": true,
-                  "synced_count": 1,
-                  "remote_tasks": [
-                    {
-                      "id": "remote-sample-1",
-                      "title": "Review Q3 Project Milestones",
-                      "description": "Examine team progress reports and finalize roadmap for next sprint.",
-                      "completed": false,
-                      "priority": "HIGH",
-                      "category": "WORK",
-                      "due_date": ${System.currentTimeMillis() + 86400000L * 2},
-                      "created_at": ${System.currentTimeMillis() - 86400000L}
-                    },
-                    {
-                      "id": "remote-sample-2",
-                      "title": "Weekly Grocery Shopping",
-                      "description": "Buy fresh produce, oat milk, and protein snacks.",
-                      "completed": true,
-                      "priority": "MEDIUM",
-                      "category": "SHOPPING",
-                      "due_date": ${System.currentTimeMillis() - 3600000L},
-                      "created_at": ${System.currentTimeMillis() - 172800000L}
-                    }
-                  ]
+                  "synced_count": 0,
+                  "remote_tasks": []
                 }
                 """.trimIndent()
             }
             url.contains("api/v1/tasks") && method == "GET" -> {
-                """
-                [
-                  {
-                    "id": "remote-sample-1",
-                    "title": "Review Q3 Project Milestones",
-                    "description": "Examine team progress reports and finalize roadmap for next sprint.",
-                    "completed": false,
-                    "priority": "HIGH",
-                    "category": "WORK",
-                    "due_date": ${System.currentTimeMillis() + 86400000L * 2},
-                    "created_at": ${System.currentTimeMillis() - 86400000L}
-                  },
-                  {
-                    "id": "remote-sample-2",
-                    "title": "Weekly Grocery Shopping",
-                    "description": "Buy fresh produce, oat milk, and protein snacks.",
-                    "completed": true,
-                    "priority": "MEDIUM",
-                    "category": "SHOPPING",
-                    "due_date": ${System.currentTimeMillis() - 3600000L},
-                    "created_at": ${System.currentTimeMillis() - 172800000L}
-                  }
-                ]
-                """.trimIndent()
+                "[]"
             }
             method == "POST" || method == "PUT" -> {
                 """

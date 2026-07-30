@@ -28,6 +28,7 @@ fun TaskEntity.toDomain(): Task {
         assignedContactName = assignedContactName,
         assignedContactPhone = assignedContactPhone,
         createdAtMillis = createdAtMillis,
+        updatedAtMillis = updatedAtMillis,
         syncStatus = try { SyncStatus.valueOf(syncStatus) } catch (_: Exception) { SyncStatus.SYNCED }
     )
 }
@@ -44,6 +45,7 @@ fun Task.toEntity(): TaskEntity {
         assignedContactName = assignedContactName,
         assignedContactPhone = assignedContactPhone,
         createdAtMillis = createdAtMillis,
+        updatedAtMillis = updatedAtMillis,
         syncStatus = syncStatus.name
     )
 }
@@ -61,6 +63,7 @@ fun TaskDto.toDomain(): Task {
         assignedContactName = assignedContactName,
         assignedContactPhone = assignedContactPhone,
         createdAtMillis = createdAtMillis,
+        updatedAtMillis = updatedAtMillis,
         syncStatus = SyncStatus.SYNCED
     )
 }
@@ -76,7 +79,8 @@ fun Task.toDto(): TaskDto {
         dueDateMillis = dueDateMillis,
         assignedContactName = assignedContactName,
         assignedContactPhone = assignedContactPhone,
-        createdAtMillis = createdAtMillis
+        createdAtMillis = createdAtMillis,
+        updatedAtMillis = updatedAtMillis
     )
 }
 
@@ -92,6 +96,7 @@ fun TaskDto.toEntity(syncStatus: SyncStatus = SyncStatus.SYNCED): TaskEntity {
         assignedContactName = assignedContactName,
         assignedContactPhone = assignedContactPhone,
         createdAtMillis = createdAtMillis,
+        updatedAtMillis = updatedAtMillis,
         syncStatus = syncStatus.name
     )
 }

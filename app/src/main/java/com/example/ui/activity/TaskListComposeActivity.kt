@@ -13,6 +13,7 @@ import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.statusBarsPadding
 import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Scaffold
@@ -54,7 +55,12 @@ class TaskListComposeActivity : ComponentActivity() {
                 Scaffold(
                     topBar = {
                         // Comparison Banner header
-                        Column(modifier = Modifier.fillMaxWidth().background(Color(0xFFE8F0FE))) {
+                        Column(
+                            modifier = Modifier
+                                .fillMaxWidth()
+                                .background(Color(0xFFE8F0FE))
+                                .statusBarsPadding()
+                        ) {
                             Row(
                                 modifier = Modifier
                                     .fillMaxWidth()

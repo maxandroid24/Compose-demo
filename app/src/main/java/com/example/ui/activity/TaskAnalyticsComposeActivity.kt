@@ -12,6 +12,7 @@ import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.statusBarsPadding
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextButton
@@ -50,7 +51,12 @@ class TaskAnalyticsComposeActivity : ComponentActivity() {
 
                 Scaffold(
                     topBar = {
-                        Column(modifier = Modifier.fillMaxWidth().background(Color(0xFFE8F0FE))) {
+                        Column(
+                            modifier = Modifier
+                                .fillMaxWidth()
+                                .background(Color(0xFFE8F0FE))
+                                .statusBarsPadding()
+                        ) {
                             Row(
                                 modifier = Modifier
                                     .fillMaxWidth()

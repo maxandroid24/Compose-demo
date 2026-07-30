@@ -25,5 +25,6 @@ data class TaskEntity(
     val assignedContactName: String? = null,
     val assignedContactPhone: String? = null,
     val createdAtMillis: Long,
+    val updatedAtMillis: Long,
     val syncStatus: String // Stored as String name of SyncStatus enum
 )

@@ -15,7 +15,8 @@ data class TaskDto(
     @Json(name = "due_date") val dueDateMillis: Long? = null,
     @Json(name = "assigned_contact_name") val assignedContactName: String? = null,
     @Json(name = "assigned_contact_phone") val assignedContactPhone: String? = null,
-    @Json(name = "created_at") val createdAtMillis: Long = System.currentTimeMillis()
+    @Json(name = "created_at") val createdAtMillis: Long = System.currentTimeMillis(),
+    @Json(name = "updated_at") val updatedAtMillis: Long = System.currentTimeMillis()
 )
 
 /**

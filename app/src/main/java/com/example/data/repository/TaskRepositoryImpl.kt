@@ -91,14 +91,20 @@ class TaskRepositoryImpl @Inject constructor(
     }
 
     override suspend fun addTask(task: Task) {
-        val newTask = task.copy(syncStatus = SyncStatus.PENDING_INSERT)
+        val now = System.currentTimeMillis()
+        val newTask = task.copy(
+            updatedAtMillis = now,
+            syncStatus = SyncStatus.PENDING_INSERT
+        )
         taskDao.insertTask(newTask.toEntity())
         workManagerScheduler.scheduleOneTimeSync()
         workManagerScheduler.scheduleTaskReminder(newTask)
     }
 
     override suspend fun updateTask(task: Task) {
+        val now = System.currentTimeMillis()
         val updatedTask = task.copy(
+            updatedAtMillis = now,
             syncStatus = if (task.syncStatus == SyncStatus.PENDING_INSERT) SyncStatus.PENDING_INSERT else SyncStatus.PENDING_UPDATE
         )
         taskDao.updateTask(updatedTask.toEntity())
@@ -162,9 +168,16 @@ class TaskRepositoryImpl @Inject constructor(
                 val remoteDtos = remoteResponse.body() ?: emptyList()
                 remoteDtos.forEach { dto ->
                     val local = taskDao.getTaskByIdSync(dto.id)
-                    // If local does not exist or is already SYNCED, update with remote version
-                    if (local == null || local.syncStatus == SyncStatus.SYNCED.name) {
+                    // If local does not exist, insert remote version
+                    if (local == null) {
                         taskDao.insertTask(dto.toEntity(SyncStatus.SYNCED))
+                    } else {
+                        // If local exists, compare updatedAtMillis
+                        // Only update if remote is newer AND local is already SYNCED
+                        // OR if remote is newer than local (conflict resolution: latest wins)
+                        if (dto.updatedAtMillis > local.updatedAtMillis) {
+                            taskDao.insertTask(dto.toEntity(SyncStatus.SYNCED))
+                        }
                     }
                 }
             }
