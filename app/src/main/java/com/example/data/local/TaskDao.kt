@@ -32,6 +32,9 @@ interface TaskDao {
     @Query("SELECT * FROM tasks WHERE syncStatus != 'SYNCED'")
     suspend fun getUnsyncedTasks(): List<TaskEntity>
 
+    @Query("SELECT * FROM tasks")
+    suspend fun getAllTasksListSync(): List<TaskEntity>
+
     @Insert(onConflict = OnConflictStrategy.REPLACE)
     suspend fun insertTask(task: TaskEntity)
 

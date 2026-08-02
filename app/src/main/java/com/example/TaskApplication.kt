@@ -17,4 +17,22 @@ class TaskApplication : Application() {
     val appContainer: AppContainer by lazy {
         AppContainer(this)
     }
+
+    override fun onCreate() {
+        super.onCreate()
+        registerNetworkCallback()
+    }
+
+    private fun registerNetworkCallback() {
+        if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.N) {
+            val connectivityManager =
+                getSystemService(android.content.Context.CONNECTIVITY_SERVICE) as? android.net.ConnectivityManager
+            connectivityManager?.registerDefaultNetworkCallback(object : android.net.ConnectivityManager.NetworkCallback() {
+                override fun onAvailable(network: android.net.Network) {
+                    android.util.Log.d("TaskApplication", "Network connection restored. Enqueuing sync task.")
+                    appContainer.workManagerScheduler.scheduleOneTimeSync()
+                }
+            })
+        }
+    }
 }

@@ -143,11 +143,14 @@ class TaskRepositoryImpl @Inject constructor(
             if (pendingUploads.isNotEmpty()) {
                 val syncResponse = apiService.syncBatch(SyncRequestDto(pendingUploads))
                 if (syncResponse.isSuccessful) {
-                    // Mark as synced locally
+                    // Mark as synced locally only if local entity has not been modified in the meantime (race condition guard)
                     unsyncedEntities.forEach { entity ->
                         if (entity.syncStatus != SyncStatus.PENDING_DELETE.name) {
-                            val syncedEntity = entity.toDomain().copy(syncStatus = SyncStatus.SYNCED).toEntity()
-                            taskDao.updateTask(syncedEntity)
+                            val currentLocal = taskDao.getTaskByIdSync(entity.id)
+                            if (currentLocal != null && currentLocal.updatedAtMillis == entity.updatedAtMillis) {
+                                val syncedEntity = entity.toDomain().copy(syncStatus = SyncStatus.SYNCED).toEntity()
+                                taskDao.updateTask(syncedEntity)
+                            }
                         }
                     }
                 }
@@ -166,18 +169,27 @@ class TaskRepositoryImpl @Inject constructor(
             val remoteResponse = apiService.getRemoteTasks()
             if (remoteResponse.isSuccessful) {
                 val remoteDtos = remoteResponse.body() ?: emptyList()
+                val remoteIds = remoteDtos.map { it.id }.toSet()
+
                 remoteDtos.forEach { dto ->
                     val local = taskDao.getTaskByIdSync(dto.id)
-                    // If local does not exist, insert remote version
                     if (local == null) {
+                        // If local does not exist, insert remote version
                         taskDao.insertTask(dto.toEntity(SyncStatus.SYNCED))
-                    } else {
-                        // If local exists, compare updatedAtMillis
-                        // Only update if remote is newer AND local is already SYNCED
-                        // OR if remote is newer than local (conflict resolution: latest wins)
+                    } else if (local.syncStatus != SyncStatus.PENDING_DELETE.name) {
+                        // Protect local PENDING_DELETE from being resurrected.
+                        // Only update if remote timestamp is newer.
                         if (dto.updatedAtMillis > local.updatedAtMillis) {
                             taskDao.insertTask(dto.toEntity(SyncStatus.SYNCED))
                         }
+                    }
+                }
+
+                // Delete local tasks that are marked SYNCED but no longer exist on remote (propagate server deletes)
+                val currentLocalTasks = taskDao.getAllTasksListSync()
+                currentLocalTasks.forEach { local ->
+                    if (local.syncStatus == SyncStatus.SYNCED.name && !remoteIds.contains(local.id)) {
+                        taskDao.deleteTaskById(local.id)
                     }
                 }
             }
